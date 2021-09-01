@@ -33,7 +33,7 @@ func (c *Core) Generate(data Data) error {
 			return err
 		}
 
-		log.Println(parse(output))
+		log.Println(Parse(output))
 		// if err := os.WriteFile(data.To, output, 0600); err != nil {
 
 		// }
