@@ -13,8 +13,11 @@ var rootCmd = &cobra.Command{
 	Long:  `simple code generation`,
 }
 
-func init() {}
+func init() {
+	rootCmd.PersistentFlags().StringVarP(&templatePath, "path", "p", "./_templates", "_templates path")
+}
 
 func Execute() error {
+	rootCmd.AddCommand(generateCmd())
 	return rootCmd.Execute()
 }

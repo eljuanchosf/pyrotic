@@ -5,3 +5,7 @@ import "text/template"
 type Core struct {
 	root *template.Template
 }
+
+type Data struct {
+	Name string
+}
