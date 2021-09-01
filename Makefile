@@ -12,7 +12,7 @@ test: ## Run unit tests
 scan: ## run scan
 	gosec ./...
 
-build: log scan
+build: log
 	go build -o $(APP_NAME)
 
 publish: build ## Publish binary to local bin

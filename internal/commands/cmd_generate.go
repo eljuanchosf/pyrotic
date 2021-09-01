@@ -25,13 +25,11 @@ func generate(cmd *cobra.Command, args []string) {
 	}
 	generator := args[0]
 	dirPath := filepath.Join(templatePath, generator)
-	files, err := os.ReadDir(dirPath)
+	_, err := os.ReadDir(dirPath)
 	if err != nil {
-		log.Println("generator not found ", err)
+		log.Println("generator not found ", generator)
 		return
 	}
-	log.Println(files[0].Name())
-	log.Println(dirPath)
 	e, err := engine.New(dirPath, templateSuffix)
 	if err != nil {
 		log.Println("error creating engine ", err)
