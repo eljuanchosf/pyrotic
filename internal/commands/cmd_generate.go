@@ -36,8 +36,6 @@ func generate(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	e.Parse()
-
 	err = e.Generate(engine.Data{Name: generateName})
 	if err != nil {
 		log.Println("error generating templates ", err)
