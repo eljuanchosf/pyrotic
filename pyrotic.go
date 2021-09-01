@@ -1,0 +1,3 @@
+package pyrotic
+
+func main() {}
