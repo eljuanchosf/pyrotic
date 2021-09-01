@@ -7,6 +7,10 @@ var (
 	templateSuffix = ".tmpl"
 )
 
+var (
+	generateName string
+)
+
 var rootCmd = &cobra.Command{
 	Use:   "pyrotic [COMMAND] --[FLAGS]",
 	Short: "simple code generation",
@@ -18,6 +22,8 @@ func init() {
 }
 
 func Execute() error {
-	rootCmd.AddCommand(generateCmd())
+	generate := generateCmd()
+	generate.PersistentFlags().StringVarP(&generateName, "name", "n", "newGeneratedName", "name of the code generation")
+	rootCmd.AddCommand(generate)
 	return rootCmd.Execute()
 }
