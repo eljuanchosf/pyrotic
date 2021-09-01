@@ -4,16 +4,16 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 	"text/template"
 
 	"github.com/code-gorilla-au/pyrotic/internal/formats"
 )
 
-func New(dirPath string, filePrefix string) (Core, error) {
-	tmp, err := withTemplates(template.New("root"), dirPath, filePrefix)
+func New(dirPath string, fileSuffix string) (Core, error) {
+	tmp, err := withTemplates(template.New("root"), fileSuffix, dirPath)
 	if err != nil {
 		return Core{}, err
 	}
@@ -44,7 +44,7 @@ func (c *Core) Generate(data Data) ([]byte, error) {
 // withTemplates - load templates by file path
 func withTemplates(root *template.Template, fileSuffix string, dirPath string) (*template.Template, error) {
 
-	files, err := ioutil.ReadDir(dirPath)
+	files, err := os.ReadDir(dirPath)
 	if err != nil {
 		return root, err
 	}
