@@ -23,7 +23,7 @@ func generateCmd() *cobra.Command {
 func generate(cmd *cobra.Command, args []string) {
 
 	if len(args) == 0 {
-		log.Println("at least 1 template name must be provided")
+		log.Println("at least 1 generator name must be provided")
 		return
 	}
 	generator := args[0]
