@@ -4,7 +4,6 @@ import "text/template"
 
 type Core struct {
 	root      *template.Template
-	meta      *template.Template
 	fwr       fileWriter
 	tmplFuncs template.FuncMap
 }
