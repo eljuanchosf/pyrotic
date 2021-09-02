@@ -23,18 +23,55 @@ const (
 // stage 1: hydrate the data from the metadata within the "---" block of the template
 //
 // stage 2: parse and execute the template with the hydrated metadata
-func parse(raw string, data Data) ([]byte, error) {
-	meta, output := extractMeta(raw)
-	hydratedData := hydrateData(meta, data)
+func parse(raw string, data Data) (Data, []byte, error) {
+	meta, stringOutput := extractMeta(raw)
+
+	hydratedData, err := generateMetaData(meta, data)
+	if err != nil {
+		return hydratedData, nil, err
+	}
+	output, err := generateTemplate(string(stringOutput), hydratedData)
+	if err != nil {
+		return hydratedData, nil, err
+	}
+	return hydratedData, output, nil
+}
+
+func generateMetaData(meta []string, data Data) (Data, error) {
+	parsedMeta := []string{}
+	for _, item := range meta {
+		t, err := template.New("meta").Parse(item)
+		if err != nil {
+			log.Println("error generating metadata ", err)
+			return data, err
+		}
+		var buf bytes.Buffer
+		wr := bufio.NewWriter(&buf)
+		if t.Execute(wr, data); err != nil {
+			log.Println("error executing template ", err)
+			return data, err
+		}
+		if err := wr.Flush(); err != nil {
+			log.Println("error flushing writer ", err)
+			return data, err
+		}
+		parsedMeta = append(parsedMeta, buf.String())
+	}
+	return hydrateData(parsedMeta, data), nil
+}
+
+func generateTemplate(output string, data Data) ([]byte, error) {
 	tmpl, err := template.New("root").Parse(output)
 	if err != nil {
 		log.Println("error parsing output ", err)
+		return nil, err
 	}
 
 	var buf bytes.Buffer
 	wr := bufio.NewWriter(&buf)
-	if err := tmpl.Execute(wr, hydratedData); err != nil {
+	if err := tmpl.Execute(wr, data); err != nil {
 		log.Println("error executing template ", err)
+		return nil, err
 	}
 	if err := wr.Flush(); err != nil {
 		log.Println("error flushing writer ", err)

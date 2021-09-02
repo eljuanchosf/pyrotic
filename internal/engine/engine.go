@@ -29,7 +29,7 @@ func (c *Core) Generate(data Data) error {
 	tmp := c.root.Templates()
 	for _, t := range tmp {
 		rawString := t.Root.String()
-		rawOutput, err := parse(rawString, data)
+		newData, rawOutput, err := parse(rawString, data)
 		if err != nil {
 			log.Println("error parsing template ", err)
 			return err
@@ -39,8 +39,11 @@ func (c *Core) Generate(data Data) error {
 			log.Println("error formatting ", err)
 			return err
 		}
-		log.Println("to ", data.To)
-		if err := c.fwr.WriteFile(data.To, formattedOut, 0600); err != nil {
+
+		if err := os.MkdirAll(filepath.Dir(newData.To), 0750); err != nil {
+			return err
+		}
+		if err := c.fwr.WriteFile(newData.To, formattedOut, 0750); err != nil {
 			log.Println("error writing to file ", err)
 			return err
 		}
