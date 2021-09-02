@@ -23,7 +23,8 @@ const (
 // stage 1: hydrate the data from the metadata within the "---" block of the template
 //
 // stage 2: parse and execute the template with the hydrated metadata
-func parse(raw string, data Data) (Data, []byte, error) {
+func parse(tmpl *template.Template, data Data) (Data, []byte, error) {
+	raw := tmpl.Root.String()
 	meta, stringOutput := extractMeta(raw)
 
 	hydratedData, err := generateMetaData(meta, data)
