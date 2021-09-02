@@ -16,7 +16,6 @@ const (
 	caseSnake  = "caseSnake"
 	caseKebab  = "caseKebab"
 	casePascal = "casePascal"
-	caseUpper  = "caseUpper"
 	caseLower  = "caseLower"
 	caseTitle  = "caseTitle"
 )

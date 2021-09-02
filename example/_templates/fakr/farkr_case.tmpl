@@ -9,10 +9,9 @@ import "fmt"
 
 func main() {
 fmt.PrintLn("hello world")
-fmt.PrintLn({{ .Meta.bar | caseSnake }})
-fmt.PrintLn({{ .Meta.bar | caseKebab }})
-fmt.PrintLn({{ .Meta.bar | casePascal }})
-fmt.PrintLn({{ .Meta.bar | caseUpper }})
-fmt.PrintLn({{ .Meta.bar | caseLower }})
-fmt.PrintLn({{ .Meta.bar | caseTitle }})
+fmt.PrintLn("{{ .Meta.bar | caseSnake }}")
+fmt.PrintLn("{{ .Meta.bar | caseKebab }}")
+fmt.PrintLn("{{ .Meta.bar | casePascal }}")
+fmt.PrintLn("{{ .Meta.bar | caseLower }}")
+fmt.PrintLn("{{ .Meta.bar | caseTitle }}")
 }
