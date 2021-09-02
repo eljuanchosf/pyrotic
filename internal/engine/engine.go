@@ -1,8 +1,6 @@
 package engine
 
 import (
-	"bufio"
-	"bytes"
 	"log"
 	"os"
 	"path/filepath"
@@ -41,24 +39,6 @@ func (c *Core) Generate(data Data) error {
 		// }
 	}
 	return nil
-}
-
-// generateTemplate - execute template with data and write to bytes buffer
-func generateTemplate(t *template.Template, data Data) ([]byte, error) {
-	var buf bytes.Buffer
-	wr := bufio.NewWriter(&buf)
-
-	if err := t.Execute(wr, &data); err != nil {
-		log.Println("error generating template ", t.Name())
-		return buf.Bytes(), err
-	}
-
-	if err := wr.Flush(); err != nil {
-		log.Println("error flushing writer ", err)
-		return buf.Bytes(), err
-	}
-
-	return buf.Bytes(), nil
 }
 
 // withTemplates - load templates by file path

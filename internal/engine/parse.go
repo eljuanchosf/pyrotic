@@ -15,8 +15,14 @@ const (
 const (
 	tokenNewLine = "\n"
 	tokenDash    = "---"
+	tokenColon   = ":"
 )
 
+// parse - 2 stage parse for a template.
+//
+// stage 1: hydrate the data from the metadata within the "---" block of the template
+//
+// stage 2: parse and execute the template with the hydrated metadata
 func parse(raw string, data Data) ([]byte, error) {
 	meta, output := extractMeta(raw)
 	hydratedData := hydrateData(meta, data)
@@ -44,14 +50,14 @@ func hydrateData(meta []string, data Data) Data {
 	tmp := map[string]interface{}{}
 	for _, item := range meta {
 		if strings.Contains(item, fieldTo) {
-			list := strings.Split(strings.TrimSpace(item), ":")
+			list := strings.Split(strings.TrimSpace(item), tokenColon)
 			log.Println(list)
 			if len(list) == 2 {
 				result.To = list[1]
 			}
 			continue
 		}
-		list := strings.Split(strings.TrimSpace(item), ":")
+		list := strings.Split(strings.TrimSpace(item), tokenColon)
 		if len(list) == 2 {
 			tmp[list[0]] = strings.TrimSpace(list[1])
 		}
