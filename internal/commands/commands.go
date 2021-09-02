@@ -3,7 +3,7 @@ package commands
 import "github.com/spf13/cobra"
 
 var (
-	templatePath   = "./_templates"
+	templatePath   = "_templates"
 	templateSuffix = ".tmpl"
 )
 
@@ -18,7 +18,8 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&templatePath, "path", "p", "./_templates", "_templates path")
+	rootCmd.PersistentFlags().StringVarP(&templatePath, "path", "p", "_templates", "templates path eg: _templates")
+	rootCmd.PersistentFlags().StringVarP(&templatePath, "extention", "x", ".tmpl", "template extention eg: *.tmpl")
 }
 
 func Execute() error {

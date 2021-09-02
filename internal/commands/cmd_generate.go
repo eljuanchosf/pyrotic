@@ -21,7 +21,7 @@ func generateCmd() *cobra.Command {
 }
 
 func generate(cmd *cobra.Command, args []string) {
-	startTime := time.Now()
+
 	if len(args) == 0 {
 		log.Println("at least 1 template name must be provided")
 		return
@@ -39,7 +39,7 @@ func generate(cmd *cobra.Command, args []string) {
 		log.Println("error creating engine ", err)
 		return
 	}
-
+	startTime := time.Now()
 	err = e.Generate(engine.Data{Name: generateName})
 	if err != nil {
 		log.Println("error generating templates ", err)
