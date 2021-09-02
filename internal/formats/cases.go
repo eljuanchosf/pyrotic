@@ -17,9 +17,10 @@ func CaseSnake(str string) string {
 }
 
 func CasePascal(str string) string {
-	tmp := matchFirstCap.ReplaceAllString(str, "${1}${2}")
-	tmp = matchAllCap.ReplaceAllString(tmp, "${1}${2}")
-	return matchSymbol.ReplaceAllString(tmp, "${1}${2}")
+	tmp := matchFirstCap.ReplaceAllString(str, "${1} ${2}")
+	tmp = matchSymbol.ReplaceAllString(tmp, "${1} ${2}")
+	tmp = strings.Title(tmp)
+	return strings.ReplaceAll(tmp, " ", "")
 }
 
 func CaseKebab(str string) string {

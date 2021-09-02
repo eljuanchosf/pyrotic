@@ -16,6 +16,9 @@ const (
 	caseSnake  = "caseSnake"
 	caseKebab  = "caseKebab"
 	casePascal = "casePascal"
+	caseUpper  = "caseUpper"
+	caseLower  = "caseLower"
+	caseTitle  = "caseTitle"
 )
 
 var (
@@ -23,6 +26,8 @@ var (
 		caseSnake:  formats.CaseSnake,
 		caseKebab:  formats.CaseKebab,
 		casePascal: formats.CasePascal,
+		caseLower:  strings.ToLower,
+		caseTitle:  strings.ToTitle,
 	}
 )
 
