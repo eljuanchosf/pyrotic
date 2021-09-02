@@ -27,11 +27,12 @@ var (
 )
 
 func New(dirPath string, fileSuffix string) (Core, error) {
-	tmp, err := withTemplates(template.New("root"), fileSuffix, dirPath)
+	tmp := template.New("root").Funcs(defaultFuncs)
+	tmp, err := withTemplates(tmp, fileSuffix, dirPath)
 	if err != nil {
+		log.Println("error loading templates ", err)
 		return Core{}, err
 	}
-	tmp = tmp.Funcs(defaultFuncs)
 	return Core{
 		root:      tmp,
 		fwr:       writer{},
@@ -43,7 +44,7 @@ func New(dirPath string, fileSuffix string) (Core, error) {
 func (c *Core) Generate(data Data) error {
 	tmp := c.root.Templates()
 	for _, t := range tmp {
-		newData, rawOutput, err := parse(t, data)
+		newData, rawOutput, err := parse(t.Root.String(), data, c.tmplFuncs)
 		if err != nil {
 			log.Println("error parsing template ", err)
 			return err

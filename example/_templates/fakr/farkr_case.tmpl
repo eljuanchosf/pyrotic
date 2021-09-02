@@ -1,5 +1,5 @@
 ---
-to: example/_templates/fakr/{{ .Name }}.go
+to: example/_templates/fakr/{{ .Name | caseKebab }}.go
 bar: slap_me
 ---
 
@@ -9,5 +9,5 @@ import "fmt"
 
 func main() {
 fmt.PrintLn("hello world")
-fmt.PrintLn({{ .Meta.bar }})
+fmt.PrintLn({{ .Meta.bar | caseKebab }})
 }

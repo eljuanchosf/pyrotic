@@ -23,25 +23,24 @@ const (
 // stage 1: hydrate the data from the metadata within the "---" block of the template
 //
 // stage 2: parse and execute the template with the hydrated metadata
-func parse(tmpl *template.Template, data Data) (Data, []byte, error) {
-	raw := tmpl.Root.String()
+func parse(raw string, data Data, funcs template.FuncMap) (Data, []byte, error) {
 	meta, stringOutput := extractMeta(raw)
 
-	hydratedData, err := generateMetaData(meta, data)
+	hydratedData, err := generateMetaData(meta, data, funcs)
 	if err != nil {
 		return hydratedData, nil, err
 	}
-	output, err := generateTemplate(string(stringOutput), hydratedData)
+	output, err := generateTemplate(string(stringOutput), hydratedData, funcs)
 	if err != nil {
 		return hydratedData, nil, err
 	}
 	return hydratedData, output, nil
 }
 
-func generateMetaData(meta []string, data Data) (Data, error) {
+func generateMetaData(meta []string, data Data, funcs template.FuncMap) (Data, error) {
 	parsedMeta := []string{}
 	for _, item := range meta {
-		t, err := template.New("meta").Parse(item)
+		t, err := template.New("meta").Funcs(funcs).Parse(item)
 		if err != nil {
 			log.Println("error generating metadata ", err)
 			return data, err
@@ -61,8 +60,8 @@ func generateMetaData(meta []string, data Data) (Data, error) {
 	return hydrateData(parsedMeta, data), nil
 }
 
-func generateTemplate(output string, data Data) ([]byte, error) {
-	tmpl, err := template.New("root").Parse(output)
+func generateTemplate(output string, data Data, funcs template.FuncMap) ([]byte, error) {
+	tmpl, err := template.New("root").Funcs(funcs).Parse(output)
 	if err != nil {
 		log.Println("error parsing output ", err)
 		return nil, err
@@ -96,7 +95,8 @@ func hydrateData(meta []string, data Data) Data {
 		}
 		list := strings.Split(strings.TrimSpace(item), tokenColon)
 		if len(list) == 2 {
-			tmp[list[0]] = strings.TrimSpace(list[1])
+			key := strings.TrimSpace(list[0])
+			tmp[key] = strings.TrimSpace(list[1])
 		}
 	}
 	result.Meta = tmp
