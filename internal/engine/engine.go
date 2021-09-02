@@ -34,6 +34,7 @@ func (c *Core) Generate(data Data) error {
 			log.Println("error parsing template ", err)
 			return err
 		}
+
 		formattedOut, err := format.Source(rawOutput)
 		if err != nil {
 			log.Println("error formatting ", err)
