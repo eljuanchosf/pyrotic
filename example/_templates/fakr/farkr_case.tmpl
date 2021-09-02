@@ -1,6 +1,6 @@
 ---
 to: example/_templates/fakr/{{ .Name | caseKebab }}.go
-bar: slap_me
+bar: random text
 ---
 
 package {{ .Name }}
@@ -8,10 +8,11 @@ package {{ .Name }}
 import "fmt"
 
 func main() {
-fmt.PrintLn("hello world")
-fmt.PrintLn("{{ .Meta.bar | caseSnake }}")
-fmt.PrintLn("{{ .Meta.bar | caseKebab }}")
-fmt.PrintLn("{{ .Meta.bar | casePascal }}")
-fmt.PrintLn("{{ .Meta.bar | caseLower }}")
-fmt.PrintLn("{{ .Meta.bar | caseTitle }}")
+fmt.Println("hello world")
+fmt.Println("{{ .Meta.bar | caseSnake }}")
+fmt.Println("{{ .Meta.bar | caseKebab }}")
+fmt.Println("{{ .Meta.bar | casePascal }}")
+fmt.Println("{{ .Meta.bar | caseLower }}")
+fmt.Println("{{ .Meta.bar | caseTitle }}")
+fmt.Println("{{ "flashGordon" | caseSnake | caseTitle }}")
 }
