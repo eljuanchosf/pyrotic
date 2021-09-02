@@ -30,7 +30,7 @@ func generate(cmd *cobra.Command, args []string) {
 	dirPath := filepath.Join(templatePath, generator)
 	_, err := os.ReadDir(dirPath)
 	if err != nil {
-		log.Println("generator not found ", generator)
+		log.Println("generator not found:", generator)
 		return
 	}
 	log.Println(chalk.Green("running generator:"), generator)
