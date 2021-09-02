@@ -4,7 +4,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
+	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 	"github.com/code-gorilla-au/pyrotic/internal/engine"
 	"github.com/spf13/cobra"
 )
@@ -19,6 +21,7 @@ func generateCmd() *cobra.Command {
 }
 
 func generate(cmd *cobra.Command, args []string) {
+	startTime := time.Now()
 	if len(args) == 0 {
 		log.Println("at least 1 template name must be provided")
 		return
@@ -41,5 +44,5 @@ func generate(cmd *cobra.Command, args []string) {
 		log.Println("error generating templates ", err)
 		return
 	}
-
+	log.Println(chalk.Green("generated in "), time.Since(startTime))
 }

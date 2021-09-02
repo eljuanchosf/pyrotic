@@ -24,8 +24,8 @@ func New(dirPath string, fileSuffix string) (Core, error) {
 	}, nil
 }
 
+// Generate - generates code from
 func (c *Core) Generate(data Data) error {
-
 	tmp := c.root.Templates()
 	for _, t := range tmp {
 		rawString := t.Root.String()
@@ -40,9 +40,6 @@ func (c *Core) Generate(data Data) error {
 			return err
 		}
 
-		if err := os.MkdirAll(filepath.Dir(newData.To), 0750); err != nil {
-			return err
-		}
 		if err := c.fwr.WriteFile(newData.To, formattedOut, 0750); err != nil {
 			log.Println("error writing to file ", err)
 			return err
