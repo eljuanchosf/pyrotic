@@ -33,6 +33,7 @@ func generate(cmd *cobra.Command, args []string) {
 		log.Println("generator not found ", generator)
 		return
 	}
+	log.Println(chalk.Green("running generator:"), generator)
 	e, err := engine.New(dirPath, templateSuffix)
 	if err != nil {
 		log.Println("error creating engine ", err)
