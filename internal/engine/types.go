@@ -3,8 +3,10 @@ package engine
 import "text/template"
 
 type Core struct {
-	root *template.Template
-	fwr  fileWriter
+	root      *template.Template
+	meta      *template.Template
+	fwr       fileWriter
+	tmplFuncs template.FuncMap
 }
 
 type Data struct {

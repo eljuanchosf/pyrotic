@@ -12,15 +12,30 @@ import (
 	"github.com/code-gorilla-au/pyrotic/internal/formats"
 )
 
+const (
+	caseSnake  = "caseSnake"
+	caseKebab  = "caseKebab"
+	casePascal = "casePascal"
+)
+
+var (
+	defaultFuncs = template.FuncMap{
+		caseSnake:  formats.CaseSnake,
+		caseKebab:  formats.CaseKebab,
+		casePascal: formats.CasePascal,
+	}
+)
+
 func New(dirPath string, fileSuffix string) (Core, error) {
 	tmp, err := withTemplates(template.New("root"), fileSuffix, dirPath)
 	if err != nil {
 		return Core{}, err
 	}
-	tmp = withFuncs(tmp)
+	tmp = tmp.Funcs(defaultFuncs)
 	return Core{
-		root: tmp,
-		fwr:  writer{},
+		root:      tmp,
+		fwr:       writer{},
+		tmplFuncs: defaultFuncs,
 	}, nil
 }
 
@@ -28,8 +43,7 @@ func New(dirPath string, fileSuffix string) (Core, error) {
 func (c *Core) Generate(data Data) error {
 	tmp := c.root.Templates()
 	for _, t := range tmp {
-		rawString := t.Root.String()
-		newData, rawOutput, err := parse(rawString, data)
+		newData, rawOutput, err := parse(t, data)
 		if err != nil {
 			log.Println("error parsing template ", err)
 			return err
@@ -69,18 +83,4 @@ func withTemplates(root *template.Template, fileSuffix string, dirPath string) (
 		return root, err
 	}
 	return root, nil
-}
-
-const (
-	caseSnake  = "caseSnake"
-	caseKebab  = "caseKebab"
-	casePascal = "casePascal"
-)
-
-func withFuncs(root *template.Template) *template.Template {
-	return root.Funcs(template.FuncMap{
-		caseSnake:  formats.CaseSnake,
-		caseKebab:  formats.CaseKebab,
-		casePascal: formats.CasePascal,
-	})
 }
