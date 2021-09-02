@@ -1,11 +1,8 @@
 package engine
 
-import "text/template"
-
 type Core struct {
-	root      *template.Template
-	fwr       fileWriter
-	tmplFuncs template.FuncMap
+	parser TmplEngine
+	fwr    fileWriter
 }
 
 type Data struct {

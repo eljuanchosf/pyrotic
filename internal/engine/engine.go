@@ -3,52 +3,24 @@ package engine
 import (
 	"go/format"
 	"log"
-	"os"
-	"path/filepath"
-	"strings"
-	"text/template"
-
-	"github.com/code-gorilla-au/pyrotic/internal/chalk"
-	"github.com/code-gorilla-au/pyrotic/internal/formats"
-)
-
-const (
-	caseSnake  = "caseSnake"
-	caseKebab  = "caseKebab"
-	casePascal = "casePascal"
-	caseLower  = "caseLower"
-	caseTitle  = "caseTitle"
-)
-
-var (
-	defaultFuncs = template.FuncMap{
-		caseSnake:  formats.CaseSnake,
-		caseKebab:  formats.CaseKebab,
-		casePascal: formats.CasePascal,
-		caseLower:  strings.ToLower,
-		caseTitle:  strings.ToTitle,
-	}
 )
 
 func New(dirPath string, fileSuffix string) (Core, error) {
-	tmp := template.New("root").Funcs(defaultFuncs)
-	tmp, err := withTemplates(tmp, fileSuffix, dirPath)
+	tmpl, err := newTmplEngine(dirPath, fileSuffix)
 	if err != nil {
-		log.Println("error loading templates ", err)
 		return Core{}, err
 	}
 	return Core{
-		root:      tmp,
-		fwr:       writer{},
-		tmplFuncs: defaultFuncs,
+		parser: tmpl,
+		fwr:    writer{},
 	}, nil
 }
 
 // Generate - generates code from
 func (c *Core) Generate(data Data) error {
-	tmp := c.root.Templates()
+	tmp := c.parser.root.Templates()
 	for _, t := range tmp {
-		newData, rawOutput, err := parse(t.Root.String(), data, c.tmplFuncs)
+		newData, rawOutput, err := parse(t.Root.String(), data, c.parser.funcs)
 		if err != nil {
 			log.Println("error parsing template ", err)
 			return err
@@ -66,26 +38,4 @@ func (c *Core) Generate(data Data) error {
 		}
 	}
 	return nil
-}
-
-// withTemplates - load templates by file path
-func withTemplates(root *template.Template, fileSuffix string, dirPath string) (*template.Template, error) {
-
-	files, err := os.ReadDir(dirPath)
-	if err != nil {
-		return root, err
-	}
-	var allFiles []string
-	for _, file := range files {
-		fileLocation := filepath.Join(dirPath, file.Name())
-		if strings.HasSuffix(file.Name(), fileSuffix) {
-			log.Println(chalk.Green("loading template: "), fileLocation)
-			allFiles = append(allFiles, fileLocation)
-		}
-	}
-	root, err = root.ParseFiles(allFiles...)
-	if err != nil {
-		return root, err
-	}
-	return root, nil
 }

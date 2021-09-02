@@ -1,3 +1,5 @@
+.PHONY: all
+
 .DEFAULT_GOAL := help
 
 COMMIT := $(shell git rev-parse --short HEAD)
