@@ -51,7 +51,6 @@ func hydrateData(meta []string, data Data) Data {
 	for _, item := range meta {
 		if strings.Contains(item, fieldTo) {
 			list := strings.Split(strings.TrimSpace(item), tokenColon)
-			log.Println(list)
 			if len(list) == 2 {
 				result.To = list[1]
 			}

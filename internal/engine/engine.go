@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"go/format"
 	"log"
 	"os"
 	"path/filepath"
@@ -19,6 +20,7 @@ func New(dirPath string, fileSuffix string) (Core, error) {
 	tmp = withFuncs(tmp)
 	return Core{
 		root: tmp,
+		fwr:  writer{},
 	}, nil
 }
 
@@ -26,17 +28,22 @@ func (c *Core) Generate(data Data) error {
 
 	tmp := c.root.Templates()
 	for _, t := range tmp {
-		raw := t.Root.String()
-		data, err := parse(raw, data)
+		rawString := t.Root.String()
+		rawOutput, err := parse(rawString, data)
 		if err != nil {
 			log.Println("error parsing template ", err)
 			return err
 		}
-
-		log.Println(string(data))
-		// if err := os.WriteFile(data.To, output, 0600); err != nil {
-
-		// }
+		formattedOut, err := format.Source(rawOutput)
+		if err != nil {
+			log.Println("error formatting ", err)
+			return err
+		}
+		log.Println("to ", data.To)
+		if err := c.fwr.WriteFile(data.To, formattedOut, 0600); err != nil {
+			log.Println("error writing to file ", err)
+			return err
+		}
 	}
 	return nil
 }
