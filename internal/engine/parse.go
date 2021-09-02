@@ -89,7 +89,7 @@ func hydrateData(meta []string, data Data) Data {
 		if strings.Contains(item, fieldTo) {
 			list := strings.Split(strings.TrimSpace(item), tokenColon)
 			if len(list) == 2 {
-				result.To = list[1]
+				result.To = strings.TrimSpace(list[1])
 			}
 			continue
 		}
