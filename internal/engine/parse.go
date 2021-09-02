@@ -17,19 +17,24 @@ const (
 	tokenDash    = "---"
 )
 
-func Parse(raw string, data Data) []byte {
+func parse(raw string, data Data) ([]byte, error) {
 	meta, output := extractMeta(raw)
 	hydratedData := hydrateData(meta, data)
-	foo, _ := template.New("root").Parse(output)
+	tmpl, err := template.New("root").Parse(output)
+	if err != nil {
+		log.Println("error parsing output ", err)
+	}
 
 	var buf bytes.Buffer
 	wr := bufio.NewWriter(&buf)
-	_ = foo.Execute(wr, data)
+	if err := tmpl.Execute(wr, hydratedData); err != nil {
+		log.Println("error executing template ", err)
+	}
 	if err := wr.Flush(); err != nil {
 		log.Println("error flushing writer ", err)
 		return buf.Bytes(), err
 	}
-	return output
+	return buf.Bytes(), nil
 }
 
 func hydrateData(meta []string, data Data) Data {
@@ -48,7 +53,7 @@ func hydrateData(meta []string, data Data) Data {
 		}
 		list := strings.Split(strings.TrimSpace(item), ":")
 		if len(list) == 2 {
-			tmp[list[0]] = list[1]
+			tmp[list[0]] = strings.TrimSpace(list[1])
 		}
 	}
 	result.Meta = tmp

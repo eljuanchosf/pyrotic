@@ -28,12 +28,14 @@ func (c *Core) Generate(data Data) error {
 
 	tmp := c.root.Templates()
 	for _, t := range tmp {
-		output, err := generateTemplate(t, data)
+		raw := t.Root.String()
+		data, err := parse(raw, data)
 		if err != nil {
+			log.Println("error parsing template ", err)
 			return err
 		}
 
-		log.Println(Parse(output))
+		log.Println(string(data))
 		// if err := os.WriteFile(data.To, output, 0600); err != nil {
 
 		// }
