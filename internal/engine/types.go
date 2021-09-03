@@ -1,7 +1,9 @@
 package engine
 
+import "github.com/code-gorilla-au/pyrotic/internal/parser"
+
 type Core struct {
-	parser TmplEngine
+	parser parser.TmplEngine
 	fwr    fileWriter
 }
 

@@ -1,12 +1,13 @@
 package engine
 
 import (
-	"go/format"
 	"log"
+
+	"github.com/code-gorilla-au/pyrotic/internal/parser"
 )
 
 func New(dirPath string, fileSuffix string) (Core, error) {
-	tmpl, err := newTmplEngine(dirPath, fileSuffix)
+	tmpl, err := parser.New(dirPath, fileSuffix)
 	if err != nil {
 		return Core{}, err
 	}
@@ -18,24 +19,20 @@ func New(dirPath string, fileSuffix string) (Core, error) {
 
 // Generate - generates code from
 func (c *Core) Generate(data Data) error {
-	tmp := c.parser.root.Templates()
-	for _, t := range tmp {
-		newData, rawOutput, err := parse(t.Root.String(), data, c.parser.funcs)
-		if err != nil {
-			log.Println("error parsing template ", err)
-			return err
-		}
 
-		formattedOut, err := format.Source(rawOutput)
-		if err != nil {
-			log.Println("error formatting ", err)
-			return err
-		}
+	parsedOutput, err := c.parser.Parse(parser.TemplateData{
+		Name: data.Name,
+	})
+	if err != nil {
+		return err
+	}
 
-		if err := c.fwr.WriteFile(newData.To, formattedOut, 0750); err != nil {
+	for _, item := range parsedOutput {
+		if err := c.fwr.WriteFile(item.To, item.Output, 0750); err != nil {
 			log.Println("error writing to file ", err)
 			return err
 		}
 	}
+
 	return nil
 }

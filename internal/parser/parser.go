@@ -45,29 +45,29 @@ func New(dirPath string, fileSuffix string) (TmplEngine, error) {
 	}, nil
 }
 
-func (te *TmplEngine) Parse(data TemplateData) ([]TemplateData, TemplateData, error) {
+func (te *TmplEngine) Parse(data TemplateData) ([]TemplateData, error) {
 	result := []TemplateData{}
 	tmp := te.root.Templates()
 	for _, t := range tmp {
-		newData, rawOutput, err := parse(t.Root.String(), data, te.funcs)
+		newData, err := parse(t.Root.String(), data, te.funcs)
 		if err != nil {
 			log.Println("error parsing template ", err)
-			return result, newData, err
+			return result, err
 		}
 
-		formattedOut, err := format.Source(rawOutput)
+		formattedOut, err := format.Source(newData.Output)
 		if err != nil {
 			log.Println("error formatting ", err)
-			return result, newData, err
+			return result, err
 		}
-		TemplateData{
+		result = append(result, TemplateData{
 			Name:   newData.Name,
 			To:     newData.To,
 			Output: formattedOut,
 			Meta:   newData.Meta,
-		}
-		result[t.Name()] = formattedOut
+		})
 	}
+	return result, nil
 }
 
 // withTemplates - load templates by file path
@@ -107,18 +107,19 @@ const (
 // stage 1: hydrate the data from the metadata within the "---" block of the template
 //
 // stage 2: parse and execute the template with the hydrated metadata
-func parse(raw string, data TemplateData, funcs template.FuncMap) (TemplateData, []byte, error) {
+func parse(raw string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
 	meta, stringOutput := extractMeta(raw)
 
 	hydratedData, err := generateMetaData(meta, data, funcs)
 	if err != nil {
-		return hydratedData, nil, err
+		return hydratedData, err
 	}
 	output, err := generateTemplate(string(stringOutput), hydratedData, funcs)
 	if err != nil {
-		return hydratedData, nil, err
+		return hydratedData, err
 	}
-	return hydratedData, output, nil
+	hydratedData.Output = output
+	return hydratedData, nil
 }
 
 func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
