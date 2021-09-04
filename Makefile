@@ -8,6 +8,10 @@ REPO := $(shell basename `git rev-parse --show-toplevel`)
 DATE := $(shell date +%Y-%m-%d-%H-%M-%S)
 APP_NAME := pyrotic
 
+# commands
+
+CMD_NAME ?= newCommand
+
 test: ## Run unit tests
 	go test --short -cover -failfast ./...
 
@@ -16,6 +20,9 @@ scan: ## run scan
 
 build: log
 	go build -o $(APP_NAME)
+
+generate_cmd: build ## gernate new command
+	./$(APP_NAME) generate cmd --name $(CMD_NAME)
 
 publish: build ## Publish binary to local bin
 	@sudo chmod +x ./$(APP_NAME) \
