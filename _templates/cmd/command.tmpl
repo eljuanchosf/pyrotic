@@ -1,0 +1,33 @@
+---
+to: internal/commands/cmd_{{ .Name | caseSnake }}.go
+---
+
+package commands
+
+import (
+	"log"
+	"os"
+	"path/filepath"
+	"time"
+
+	"github.com/code-gorilla-au/pyrotic/internal/chalk"
+	"github.com/code-gorilla-au/pyrotic/internal/engine"
+	"github.com/spf13/cobra"
+)
+
+func {{.Name | caseLower }}Cmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "{{ .Name | caseLower }}",
+		Short: "a new command",
+		Long:  "a new command",
+		Run:   {{ .Name | caseCamel }},
+	}
+}
+
+func {{ .Name | caseCamel }}(cmd *cobra.Command, args []string) {
+
+	if len(args) == 0 {
+		log.Println("at least 1 argument name must be provided")
+		return
+	}
+}
