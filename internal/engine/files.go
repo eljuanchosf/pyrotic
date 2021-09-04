@@ -34,27 +34,53 @@ func (w *writer) AppendFile(name string, data []byte) error {
 	return nil
 }
 
-func (w *writer) Inject(name string, data []byte, matcher string) error {
+func (w *writer) Inject(name string, data []byte, inject inject) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
-	file, err := os.ReadFile(name)
+	source, err := os.ReadFile(name)
 	if err != nil {
 		log.Println("error reading file", err)
 		return err
 	}
-	splitByMatcher := strings.SplitAfter(string(file), matcher)
+	splitByMatcher := strings.SplitAfter(string(source), inject.Matcher)
 	if len(splitByMatcher) != 2 {
-		log.Printf("injection token %s is not found in file %s", matcher, name)
+		log.Printf("injection token %s is not found in file %s", inject.Matcher, name)
 		return nil
 	}
-	formatedOutput := strings.Join([]string{
-		splitByMatcher[0],
-		string(data),
-		splitByMatcher[1],
-	}, "")
+	formatedOutput := injectIntoData(name, source, data, inject)
 	if err := os.WriteFile(name, []byte(formatedOutput), FileModeOwnerRWX); err != nil {
 		log.Println("error appending data", err)
 		return err
 	}
 	return nil
+}
+
+func injectIntoData(name string, source, data []byte, inject inject) []byte {
+	var splitByMatcher []string
+
+	switch inject.After {
+	case true:
+		splitByMatcher = strings.SplitAfter(string(source), inject.Matcher)
+		if len(splitByMatcher) != 2 {
+			log.Printf("injection token %s is not found in file %s", inject.Matcher, name)
+			return source
+		}
+	default:
+		idx := strings.LastIndex(string(source), inject.Matcher)
+		if idx == -1 {
+			log.Printf("injection token %s is not found in file %s", inject.Matcher, name)
+			return source
+		}
+		splitByMatcher = []string{
+			string(source[:(idx - 1)]),
+			string(source[idx:]),
+		}
+	}
+
+	formatedOutput := strings.Join([]string{
+		splitByMatcher[0],
+		string(data),
+		splitByMatcher[1],
+	}, "")
+	return []byte(formatedOutput)
 }

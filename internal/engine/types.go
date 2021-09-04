@@ -18,3 +18,8 @@ type Data struct {
 type writer struct {
 	mx sync.RWMutex
 }
+
+type inject struct {
+	After   bool
+	Matcher string
+}
