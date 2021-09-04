@@ -1,0 +1,7 @@
+---
+to: internal/commands/commands.go
+inject: true
+after: // add commands
+---
+
+    rootCmd.AddCommand({{.Name | caseLower }}Cmd())
