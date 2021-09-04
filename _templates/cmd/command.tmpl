@@ -5,24 +5,24 @@ to: internal/commands/cmd_{{ .Name | caseSnake }}.go
 package commands
 
 import (
-"log"
+	"log"
 
-"github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 func {{.Name | caseCamel }}Cmd() *cobra.Command {
-return &cobra.Command{
-Use: "{{ .Name | caseLower }}",
-Short: "a new command",
-Long: "a new command",
-Run: {{ .Name | caseCamel }},
-}
+	return &cobra.Command{
+		Use:   "{{ .Name | caseLower }}",
+		Short: "a new command",
+		Long:  "a new command",
+		Run:   {{ .Name | caseCamel }},
+	}
 }
 
 func {{ .Name | caseCamel }}(cmd *cobra.Command, args []string) {
 
-if len(args) == 0 {
-log.Println("at least 1 argument name must be provided")
-return
-}
+	if len(args) == 0 {
+		log.Println("at least 1 argument name must be provided")
+		return
+	}
 }
