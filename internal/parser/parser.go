@@ -99,6 +99,9 @@ func withTemplates(root *template.Template, fileSuffix string, dirPath string) (
 const (
 	fieldTo     = "to"
 	fieldAppend = "append"
+	fieldInject = "inject"
+	fieldAfter  = "after"
+	fieldBefore = "before"
 )
 
 const (
