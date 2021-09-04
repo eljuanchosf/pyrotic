@@ -28,10 +28,17 @@ func (c *Core) Generate(data Data) error {
 	}
 
 	for _, item := range parsedOutput {
+		if item.Append {
+			if err := c.fwr.AppendFile(item.To, item.Output); err != nil {
+				log.Println("error appending file ", err)
+				continue
+			}
+		}
 		if err := c.fwr.WriteFile(item.To, item.Output, 0750); err != nil {
 			log.Println("error writing to file ", err)
 			return err
 		}
+
 	}
 
 	return nil
