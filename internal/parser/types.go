@@ -10,6 +10,7 @@ type TmplEngine struct {
 type TemplateData struct {
 	Name   string
 	To     string
+	Append bool
 	Output []byte
 	Meta   map[string]interface{}
 }
