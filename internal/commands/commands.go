@@ -19,7 +19,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&templatePath, "path", "p", "_templates", "templates path eg: _templates")
-	rootCmd.PersistentFlags().StringVarP(&templateSuffix, "extention", "x", ".tmpl", "template extention eg: *.tmpl")
+	rootCmd.PersistentFlags().StringVarP(&templateSuffix, "extension", "x", ".tmpl", "template extension eg: *.tmpl")
 }
 
 func Execute() error {

@@ -10,7 +10,7 @@ go get -u github.com/code-gorilla-au/pyrotic
 
 ```
 
-initial setup creates a `_template` directory at the root of the project to hold the generators
+initial setup creates a `_templates` directory at the root of the project to hold the generators
 
 ```
 pyrotic init
@@ -18,10 +18,26 @@ pyrotic init
 
 ## Run
 
+default template path is `_templates` and default file extension is `.tmpl`
+
 ```
 pyrotic generate <name of generator> --name <name-to-pass-in>
 
 eg: pyrotic generate cmd --name setup
+```
+
+### Use different directory
+
+```
+pyrotic --path example/_templates generate cmd --name setup
+pyrotic -p example/_templates generate cmd --name setup
+```
+
+### Use different file extension
+
+```
+pyrotic --extension ".template" generate cmd --name setup
+pyrotic -x ".template" generate cmd --name setup
 ```
 
 ## Built in template functions
