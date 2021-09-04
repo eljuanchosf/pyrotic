@@ -17,6 +17,10 @@ type Data struct {
 
 type writer struct {
 	mx sync.RWMutex
+	fs files
+}
+
+type fileSvc struct {
 }
 
 type inject struct {
