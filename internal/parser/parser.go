@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -93,7 +94,8 @@ func withTemplates(root *template.Template, fileSuffix string, dirPath string) (
 }
 
 const (
-	fieldTo = "to"
+	fieldTo     = "to"
+	fieldAppend = "append"
 )
 
 const (
@@ -171,17 +173,25 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 	}
 	tmp := map[string]interface{}{}
 	for _, item := range meta {
-		if strings.Contains(item, fieldTo) {
+		switch {
+		case strings.Contains(item, fieldTo):
 			list := strings.Split(strings.TrimSpace(item), tokenColon)
 			if len(list) == 2 {
 				result.To = strings.TrimSpace(list[1])
 			}
-			continue
-		}
-		list := strings.Split(strings.TrimSpace(item), tokenColon)
-		if len(list) == 2 {
-			key := strings.TrimSpace(list[0])
-			tmp[key] = strings.TrimSpace(list[1])
+		case strings.Contains(item, fieldAppend):
+			list := strings.Split(strings.TrimSpace(item), tokenColon)
+
+			if len(list) == 2 {
+				append, _ := strconv.ParseBool(strings.TrimSpace(list[1]))
+				result.Append = append
+			}
+		default:
+			list := strings.Split(strings.TrimSpace(item), tokenColon)
+			if len(list) == 2 {
+				key := strings.TrimSpace(list[0])
+				tmp[key] = strings.TrimSpace(list[1])
+			}
 		}
 	}
 	result.Meta = tmp
