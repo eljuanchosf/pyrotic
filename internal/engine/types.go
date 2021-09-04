@@ -13,8 +13,6 @@ type Core struct {
 
 type Data struct {
 	Name string
-	To   string
-	Meta map[string]interface{}
 }
 
 type writer struct {
