@@ -36,8 +36,8 @@ func (c *Core) Generate(data Data) error {
 			}
 		case item.Inject:
 			if err := c.fwr.Inject(item.To, item.Output, inject{
-				After:   false,
-				Matcher: item.After,
+				After:   isAfter(item.Before, item.After),
+				Matcher: getMatcher(item.Before, item.After),
 			}); err != nil {
 				log.Println("error appending file ", err)
 				return err
