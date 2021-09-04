@@ -182,34 +182,32 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 	}
 	tmp := map[string]interface{}{}
 	for _, item := range meta {
-		switch {
-		case strings.Contains(item, fieldTo):
-			list := strings.Split(strings.TrimSpace(item), tokenColon)
-			if len(list) == 2 {
-				result.To = strings.TrimSpace(list[1])
+		tokens := strings.Split(strings.TrimSpace(item), tokenColon)
+		if len(tokens) != 2 {
+			log.Println("malformed template data for ", data.Name)
+			break
+		}
+		switch strings.TrimSpace(tokens[0]) {
+		case fieldTo:
+			result.To = strings.TrimSpace(tokens[1])
+		case fieldAfter:
+			result.After = strings.TrimSpace(tokens[1])
+		case fieldBefore:
+			result.Before = strings.TrimSpace(tokens[1])
+		case fieldAppend:
+			stringAppend := strings.TrimSpace(tokens[1])
+			append, err := strconv.ParseBool(stringAppend)
+			if err != nil {
+				log.Println("error parsing bool", err)
 			}
-		case strings.Contains(item, fieldAppend):
-			list := strings.Split(strings.TrimSpace(item), tokenColon)
-
-			if len(list) == 2 {
-				stringAppend := strings.TrimSpace(list[1])
-				append, err := strconv.ParseBool(stringAppend)
-				if err != nil {
-					log.Println("error parsing bool", err)
-				}
-				result.Append = append
+			result.Append = append
+		case fieldInject:
+			stringAppend := strings.TrimSpace(tokens[1])
+			inject, err := strconv.ParseBool(stringAppend)
+			if err != nil {
+				log.Println("error parsing bool", err)
 			}
-		case strings.Contains(item, fieldInject):
-			list := strings.Split(strings.TrimSpace(item), tokenColon)
-
-			if len(list) == 2 {
-				stringAppend := strings.TrimSpace(list[1])
-				inject, err := strconv.ParseBool(stringAppend)
-				if err != nil {
-					log.Println("error parsing bool", err)
-				}
-				result.Inject = inject
-			}
+			result.Inject = inject
 		default:
 			list := strings.Split(strings.TrimSpace(item), tokenColon)
 			if len(list) == 2 {
