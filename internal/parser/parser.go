@@ -209,11 +209,8 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 			}
 			result.Inject = inject
 		default:
-			list := strings.Split(strings.TrimSpace(item), tokenColon)
-			if len(list) == 2 {
-				key := strings.TrimSpace(list[0])
-				tmp[key] = strings.TrimSpace(list[1])
-			}
+			key := strings.TrimSpace(tokens[0])
+			tmp[key] = strings.TrimSpace(tokens[1])
 		}
 	}
 	result.Meta = tmp
