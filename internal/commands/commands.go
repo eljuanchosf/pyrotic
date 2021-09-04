@@ -27,5 +27,6 @@ func Execute() error {
 	generate.PersistentFlags().StringVarP(&generateName, "name", "n", "newGeneratedName", "name of the code generation")
 	rootCmd.AddCommand(generate)
 	rootCmd.AddCommand(initCmd())
+	rootCmd.AddCommand(newCmd())
 	return rootCmd.Execute()
 }
