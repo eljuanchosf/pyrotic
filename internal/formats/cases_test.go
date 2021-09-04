@@ -83,3 +83,43 @@ func TestCasePascal(t *testing.T) {
 		})
 	}
 }
+
+func TestCaseCamel(t *testing.T) {
+	type args struct {
+		str string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "should return snakeCase",
+			args: args{
+				str: "snake_case",
+			},
+			want: "snakeCase",
+		},
+		{
+			name: "should return pascalCase",
+			args: args{
+				str: "PascalCase",
+			},
+			want: "pascalCase",
+		},
+		{
+			name: "should return kebabCase",
+			args: args{
+				str: "kebab-case",
+			},
+			want: "kebabCase",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := CaseCamel(tt.args.str); got != tt.want {
+				t.Errorf("CaseCamel() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -21,6 +21,7 @@ const (
 	casePascal = "casePascal"
 	caseLower  = "caseLower"
 	caseTitle  = "caseTitle"
+	caseCamel  = "caseCamel"
 )
 
 var (
@@ -30,6 +31,7 @@ var (
 		casePascal: formats.CasePascal,
 		caseLower:  strings.ToLower,
 		caseTitle:  strings.ToTitle,
+		caseCamel:  formats.CaseCamel,
 	}
 )
 
