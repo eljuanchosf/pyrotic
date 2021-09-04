@@ -1,6 +1,10 @@
 package engine
 
-import "github.com/code-gorilla-au/pyrotic/internal/parser"
+import (
+	"sync"
+
+	"github.com/code-gorilla-au/pyrotic/internal/parser"
+)
 
 type Core struct {
 	parser parser.TmplEngine
@@ -14,4 +18,5 @@ type Data struct {
 }
 
 type writer struct {
+	mx sync.RWMutex
 }

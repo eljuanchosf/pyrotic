@@ -13,7 +13,7 @@ func New(dirPath string, fileSuffix string) (Core, error) {
 	}
 	return Core{
 		parser: tmpl,
-		fwr:    writer{},
+		fwr:    &writer{},
 	}, nil
 }
 
