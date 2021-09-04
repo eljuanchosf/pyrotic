@@ -16,6 +16,12 @@ initial setup creates a `_templates` directory at the root of the project to hol
 pyrotic init
 ```
 
+create your first generator
+
+```
+pyrotic new cmd
+```
+
 ## Run
 
 default template path is `_templates` and default file extension is `.tmpl`
