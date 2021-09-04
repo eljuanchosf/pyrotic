@@ -22,19 +22,25 @@ func initCmd() *cobra.Command {
 
 func initFunc(cmd *cobra.Command, args []string) {
 	log.Println(chalk.Green("creating initial setup"), templatePath)
-	dirPath := path.Join(templatePath, "new")
+	dirPath := path.Join(templatePath, "new", fmt.Sprintf("new%s", templateSuffix))
 	if err := os.MkdirAll(filepath.Dir(dirPath), 0750); err != nil {
 		log.Println("error creating", err)
 		return
 	}
-	fileName := path.Join(dirPath, fmt.Sprintf("new%s", templateSuffix))
-	if err := os.WriteFile(fileName, []byte(initTemplate), 0750); err != nil {
+
+	file, err := os.Create(dirPath)
+	if err != nil {
 		log.Println("error creating base template ", err)
+		return
+	}
+	defer file.Close()
+	if _, err := file.Write([]byte(initTemplate)); err != nil {
+		log.Println("error creating file")
+		return
 	}
 }
 
-var initTemplate = `
----
+var initTemplate = `---
 to:
 ---
 package main
