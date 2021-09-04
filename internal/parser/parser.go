@@ -63,6 +63,7 @@ func (te *TmplEngine) Parse(data TemplateData) ([]TemplateData, error) {
 		}
 		result = append(result, TemplateData{
 			Name:   newData.Name,
+			Append: newData.Append,
 			To:     newData.To,
 			Output: formattedOut,
 			Meta:   newData.Meta,
@@ -183,7 +184,11 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 			list := strings.Split(strings.TrimSpace(item), tokenColon)
 
 			if len(list) == 2 {
-				append, _ := strconv.ParseBool(strings.TrimSpace(list[1]))
+				stringAppend := strings.TrimSpace(list[1])
+				append, err := strconv.ParseBool(stringAppend)
+				if err != nil {
+					log.Println("error parsing bool", err)
+				}
 				result.Append = append
 			}
 		default:
