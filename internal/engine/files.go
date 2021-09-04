@@ -42,9 +42,17 @@ func (w *writer) Inject(name string, data []byte, matcher string) error {
 		log.Println("error reading file", err)
 		return err
 	}
-	idx := strings.LastIndex(string(file), matcher)
-	log.Println("file ", string(file[idx]))
-	if err := os.WriteFile(name, data, FileModeOwnerRWX); err != nil {
+	splitByMatcher := strings.SplitAfter(string(file), matcher)
+	if len(splitByMatcher) != 2 {
+		log.Printf("injection token %s is not found in file %s", matcher, name)
+		return nil
+	}
+	formatedOutput := strings.Join([]string{
+		splitByMatcher[0],
+		string(data),
+		splitByMatcher[1],
+	}, "")
+	if err := os.WriteFile(name, []byte(formatedOutput), FileModeOwnerRWX); err != nil {
 		log.Println("error appending data", err)
 		return err
 	}
