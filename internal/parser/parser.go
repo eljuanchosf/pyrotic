@@ -66,6 +66,9 @@ func (te *TmplEngine) Parse(data TemplateData) ([]TemplateData, error) {
 		result = append(result, TemplateData{
 			Name:   newData.Name,
 			Append: newData.Append,
+			Inject: newData.Inject,
+			Before: newData.Before,
+			After:  newData.After,
 			To:     newData.To,
 			Output: formattedOut,
 			Meta:   newData.Meta,
@@ -195,6 +198,17 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 					log.Println("error parsing bool", err)
 				}
 				result.Append = append
+			}
+		case strings.Contains(item, fieldInject):
+			list := strings.Split(strings.TrimSpace(item), tokenColon)
+
+			if len(list) == 2 {
+				stringAppend := strings.TrimSpace(list[1])
+				inject, err := strconv.ParseBool(stringAppend)
+				if err != nil {
+					log.Println("error parsing bool", err)
+				}
+				result.Inject = inject
 			}
 		default:
 			list := strings.Split(strings.TrimSpace(item), tokenColon)
