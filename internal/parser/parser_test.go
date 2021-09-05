@@ -22,7 +22,7 @@ func Test_withTemplates(t *testing.T) {
 		{
 			name: "should return fakr",
 			args: args{
-				root:       template.New("root"),
+				root:       template.New("root").Funcs(defaultFuncs),
 				fileSuffix: "tmpl",
 				dirPath:    "../../example/_templates/fakr",
 			},
