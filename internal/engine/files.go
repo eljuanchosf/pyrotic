@@ -45,11 +45,6 @@ func (w *writer) InjectIntoFile(name string, data []byte, inject inject) error {
 		log.Println("error reading file", err)
 		return err
 	}
-	splitByMatcher := strings.SplitAfter(string(source), inject.Matcher)
-	if len(splitByMatcher) != 2 {
-		log.Printf("injection token %s is not found in file %s", inject.Matcher, name)
-		return nil
-	}
 	formatedOutput := injectIntoData(name, source, data, inject)
 	if err := w.fs.WriteFile(name, []byte(formatedOutput), FileModeOwnerRWX); err != nil {
 		log.Println("error appending data", err)
@@ -76,7 +71,7 @@ func injectIntoData(name string, source, data []byte, inject inject) []byte {
 		}
 		splitByMatcher = []string{
 			string(source[:(idx - 1)]),
-			string(source[idx:]),
+			fmt.Sprintf("\n%s", string(source[idx:])),
 		}
 	}
 
@@ -117,11 +112,15 @@ func (f *fileWrite) ReadFile(name string) ([]byte, error) {
 }
 
 func (f *fileWrite) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
-	return os.OpenFile(name, flag, perm)
+	return os.OpenFile(filepath.Clean(name), flag, perm)
 }
 
 func (f *fileWrite) Write(file *os.File, b []byte) (n int, err error) {
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Println("error closing file ", err)
+		}
+	}()
 	return file.Write(b)
 }
 
@@ -134,7 +133,7 @@ func (f *fileLog) ReadFile(name string) ([]byte, error) {
 }
 
 func (f *fileLog) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
-	return os.OpenFile(name, flag, perm)
+	return os.OpenFile(filepath.Clean(name), flag, perm)
 }
 
 func (f *fileLog) Write(file *os.File, b []byte) (n int, err error) {

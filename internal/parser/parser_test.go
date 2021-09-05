@@ -16,17 +16,17 @@ func Test_withTemplates(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    string
+		want    int
 		wantErr bool
 	}{
 		{
-			name: "should return fakr",
+			name: "should return inject_after.tmpl",
 			args: args{
-				root:       template.New("root"),
+				root:       template.New("root").Funcs(defaultFuncs),
 				fileSuffix: "tmpl",
 				dirPath:    "../../example/_templates/fakr",
 			},
-			want:    "fakr.tmpl",
+			want:    5,
 			wantErr: false,
 		},
 	}
@@ -38,7 +38,7 @@ func Test_withTemplates(t *testing.T) {
 				return
 			}
 			list := got.Templates()
-			assert.Equal(t, tt.want, list[0].Name())
+			assert.Equal(t, tt.want, len(list))
 		})
 	}
 }

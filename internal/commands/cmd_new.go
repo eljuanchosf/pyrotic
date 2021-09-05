@@ -38,7 +38,12 @@ func new(cmd *cobra.Command, args []string) {
 		log.Println("error creating base template ", err)
 		return
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Println("error closing file", err)
+		}
+	}()
+
 	if _, err := file.Write([]byte(newGeneratorTemplate)); err != nil {
 		log.Println("error creating file")
 		return
