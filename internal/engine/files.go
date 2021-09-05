@@ -45,11 +45,6 @@ func (w *writer) InjectIntoFile(name string, data []byte, inject inject) error {
 		log.Println("error reading file", err)
 		return err
 	}
-	splitByMatcher := strings.SplitAfter(string(source), inject.Matcher)
-	if len(splitByMatcher) != 2 {
-		log.Printf("injection token %s is not found in file %s", inject.Matcher, name)
-		return nil
-	}
 	formatedOutput := injectIntoData(name, source, data, inject)
 	if err := w.fs.WriteFile(name, []byte(formatedOutput), FileModeOwnerRWX); err != nil {
 		log.Println("error appending data", err)
