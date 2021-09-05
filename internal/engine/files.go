@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/code-gorilla-au/pyrotic/internal/chalk"
@@ -106,6 +107,9 @@ func setFileWriter(dryrun bool) fileReadWrite {
 }
 
 func (f *fileWrite) WriteFile(name string, data []byte, perm os.FileMode) error {
+	if err := os.MkdirAll(filepath.Dir(name), FileModeOwnerRWX); err != nil {
+		return err
+	}
 	return os.WriteFile(name, data, perm)
 }
 func (f *fileWrite) ReadFile(name string) ([]byte, error) {
