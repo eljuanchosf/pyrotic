@@ -8,6 +8,9 @@ import (
 )
 
 func New(dryrun bool, dirPath string, fileSuffix string) (Core, error) {
+	if dryrun {
+		log.Println("DRYRUN MODE")
+	}
 	tmpl, err := parser.New(dirPath, fileSuffix)
 	if err != nil {
 		return Core{}, err
