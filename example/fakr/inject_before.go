@@ -1,6 +1,12 @@
 package fakr
 
-func booAfter()
+import "fmt"
+
+func booAfter() {
+	fmt.Println("hello")
+}
 
 // inject
-func barAfter()
+func barAfter() {
+	fmt.Println("hello")
+}

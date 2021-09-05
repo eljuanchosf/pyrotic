@@ -16,7 +16,7 @@ func Test_withTemplates(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    string
+		want    int
 		wantErr bool
 	}{
 		{
@@ -26,7 +26,7 @@ func Test_withTemplates(t *testing.T) {
 				fileSuffix: "tmpl",
 				dirPath:    "../../example/_templates/fakr",
 			},
-			want:    "inject_after.tmpl",
+			want:    5,
 			wantErr: false,
 		},
 	}
@@ -38,7 +38,7 @@ func Test_withTemplates(t *testing.T) {
 				return
 			}
 			list := got.Templates()
-			assert.Equal(t, tt.want, list[0].Name())
+			assert.Equal(t, tt.want, len(list))
 		})
 	}
 }
