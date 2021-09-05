@@ -107,7 +107,7 @@ func setFileWriter(dryrun bool) fileReadWrite {
 }
 
 func (f *fileWrite) WriteFile(name string, data []byte, perm os.FileMode) error {
-	if err := os.MkdirAll(filepath.Dir(name), FileModeOwnerRWX); err != nil {
+	if err := os.MkdirAll(filepath.Dir(name), 0750); err != nil {
 		return err
 	}
 	return os.WriteFile(name, data, perm)
