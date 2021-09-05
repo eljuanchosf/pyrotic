@@ -46,6 +46,15 @@ pyrotic --extension ".template" generate cmd --name setup
 pyrotic -x ".template" generate cmd --name setup
 ```
 
+### Dry run mode
+
+dry run will log to console rather than write to file
+
+```
+pyrotic -d generate cmd --name setup
+pyrotic --dry-run generate cmd --name setup
+```
+
 ## Built in template functions
 
 ships with some already built in template funcs, some [examples](example/_templates/fakr/farkr_case.tmpl)
