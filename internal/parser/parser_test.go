@@ -20,13 +20,13 @@ func Test_withTemplates(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "should return fakr",
+			name: "should return inject_after.tmpl",
 			args: args{
 				root:       template.New("root").Funcs(defaultFuncs),
 				fileSuffix: "tmpl",
 				dirPath:    "../../example/_templates/fakr",
 			},
-			want:    "fakr.tmpl",
+			want:    "inject_after.tmpl",
 			wantErr: false,
 		},
 	}
