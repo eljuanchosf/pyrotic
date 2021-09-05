@@ -2,11 +2,11 @@ package fakr
 
 import "fmt"
 
-func boo() {
+func booAfter() {
 	fmt.Println("hello")
 }
 
 // inject
-func bar() {
+func barAfter() {
 	fmt.Println("hello")
 }
