@@ -128,22 +128,25 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 	return result
 }
 
-func extractMeta(output string) ([]string, string) {
-	list := strings.Split(string(output), tokenNewLine)
+func extractMeta(template string) ([]string, string) {
+	rawOut := strings.Split(template, tokenNewLine)
 	meta := []string{}
+	output := []string{}
 	count := 0
-	for index, s := range list {
+	for index, s := range rawOut {
+		trimmed := strings.TrimSpace(s)
 		if count == 2 {
-			list = list[index:]
+			output = rawOut[index:]
 			break
 		}
 
-		if s == tokenDash {
+		if trimmed == tokenDash {
 			count++
 			continue
 		}
-		meta = append(meta, s)
+		if count >= 1 {
+			meta = append(meta, trimmed)
+		}
 	}
-	formattedOutput := strings.Join(list, tokenNewLine)
-	return meta, formattedOutput
+	return meta, strings.Join(output, tokenNewLine)
 }

@@ -2,6 +2,8 @@ package parser
 
 import (
 	"encoding/json"
+	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -53,6 +55,24 @@ func Test_hydrateData(t *testing.T) {
 				Inject: true,
 				Before: "",
 				After:  "// deepak",
+				Output: nil,
+				Meta:   map[string]interface{}{},
+			},
+		},
+		{
+			name: "should return append",
+			args: args{
+				meta: []string{
+					"append: true",
+				},
+				data: TemplateData{},
+			},
+			want: TemplateData{
+				Name:   "",
+				To:     "",
+				Append: true,
+				Inject: false,
+				Before: "",
 				Output: nil,
 				Meta:   map[string]interface{}{},
 			},
@@ -144,6 +164,63 @@ func Test_hydrateData(t *testing.T) {
 			wantJSON, err := json.Marshal(tt.want)
 			assert.NoError(t, err)
 			assert.JSONEq(t, string(wantJSON), string(gotJSON))
+		})
+	}
+}
+
+func Test_extractMeta(t *testing.T) {
+	type args struct {
+		output string
+	}
+	tests := []struct {
+		name   string
+		args   args
+		meta   []string
+		output string
+	}{
+		{
+			name: "should return meta block",
+			args: args{
+				output: `---
+				to: foo
+				---
+				`,
+			},
+			meta:   []string{"to: foo"},
+			output: "",
+		},
+		{
+			name: "should empty if no block",
+			args: args{
+				output: `
+				to: foo
+				`,
+			},
+			meta:   []string{},
+			output: "",
+		},
+		{
+			name: "should return meta and block",
+			args: args{
+				output: `---
+				append: true
+				---
+				blah
+				`,
+			},
+			meta:   []string{"append: true"},
+			output: "blah",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1 := extractMeta(tt.args.output)
+			if !reflect.DeepEqual(got, tt.meta) {
+				t.Errorf("extractMeta() got = %v, want %v", got, tt.meta)
+			}
+			if strings.TrimSpace(got1) != tt.output {
+				t.Errorf("extractMeta() got1 = %v, want %v", got1, tt.output)
+			}
 		})
 	}
 }
