@@ -55,6 +55,19 @@ pyrotic -d generate cmd --name setup
 pyrotic --dry-run generate cmd --name setup
 ```
 
+## Formatter properties
+
+formatter will pick up any of these variables within the `---` block and hydrate the metadata for the template. Any properties matching the signature will be added to the Meta property, for example `foo: bar` will be accessible by `{{ Meta.foo }}`.
+
+| Property | Type | Default | Example |
+| -------- | ---- | ------- | ------- |
+| to: | string (path) | "" | src/lib/utils/readme.md |
+| append: | bool | false | false |
+| inject: | bool | false | false |
+| before: | string | "" | type config struct |
+| after: | string | "" | // commands |
+
+
 ## Built in template functions
 
 ships with some already built in template funcs, some [examples](example/_templates/fakr/farkr_case.tmpl)
