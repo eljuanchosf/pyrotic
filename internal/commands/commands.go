@@ -9,7 +9,7 @@ var (
 	templatePath   = "_templates"
 	templateSuffix = ".tmpl"
 	dryrun         = false
-	version        = ""
+	version        = "v.dev-1.0.0"
 )
 
 var (

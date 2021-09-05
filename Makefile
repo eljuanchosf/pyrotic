@@ -8,7 +8,7 @@ REPO := $(shell basename `git rev-parse --show-toplevel`)
 DATE := $(shell date +%Y-%m-%d-%H-%M-%S)
 APP_NAME := pyrotic
 
-GO_BUILD_FLAGS=-ldflags="-X 'github.com/code-gorilla-au/pyrotic/internal/commands.version=v.dev-$(BRANCH)-$(COMMIT)'"
+GO_BUILD_FLAGS=-ldflags="-X 'github.com/code-gorilla-au/pyrotic/internal/commands.version=dev-$(BRANCH)-$(COMMIT)'"
 
 # commands
 CMD_NAME ?= newCommand
