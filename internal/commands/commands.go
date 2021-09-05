@@ -5,9 +5,11 @@ import (
 )
 
 var (
+	// root vars
 	templatePath   = "_templates"
 	templateSuffix = ".tmpl"
 	dryrun         = false
+	version        = ""
 )
 
 var (
@@ -31,6 +33,7 @@ func Execute() error {
 	generate.PersistentFlags().StringVarP(&generateName, "name", "n", "newGeneratedName", "name of the code generation")
 	rootCmd.AddCommand(generate)
 	// add commands
+	rootCmd.AddCommand(versionCmd())
 	rootCmd.AddCommand(initCmd())
 	rootCmd.AddCommand(newCmd())
 	return rootCmd.Execute()
