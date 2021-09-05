@@ -1,10 +1,13 @@
 package engine
 
 import (
+	"fmt"
 	"io/fs"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 )
 
 const (
@@ -119,7 +122,7 @@ func (f *fileWrite) Write(file *os.File, b []byte) (n int, err error) {
 }
 
 func (f *fileLog) WriteFile(name string, data []byte, perm os.FileMode) error {
-	log.Println(name, string(data))
+	log.Println(chalk.Green("logging to console:"), name, fmt.Sprintf("\n%s", string(data)))
 	return nil
 }
 func (f *fileLog) ReadFile(name string) ([]byte, error) {
@@ -131,6 +134,6 @@ func (f *fileLog) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, e
 }
 
 func (f *fileLog) Write(file *os.File, b []byte) (n int, err error) {
-	log.Println(string(b))
+	log.Println(chalk.Green("logging to console:"), file.Name(), fmt.Sprintf("\n%s", string(b)))
 	return 0, nil
 }
