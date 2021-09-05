@@ -25,10 +25,6 @@ build: log
 generate_cmd: build ## gernate new command
 	./$(APP_NAME) generate cmd --name $(CMD_NAME)
 
-publish: build ## Publish binary to local bin
-	@sudo chmod +x ./$(APP_NAME) \
-	&& sudo cp ./$(APP_NAME) /usr/local/bin
-
 
 # HELP
 # This will output the help for each task
