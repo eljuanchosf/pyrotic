@@ -1,6 +1,6 @@
 package fakr
 
-func boo()
+func booAfter()
 
 // inject
-func bar()
+func barAfter()
