@@ -15,7 +15,7 @@ const (
 func (w *writer) WriteFile(name string, data []byte, perm fs.FileMode) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
-	return os.WriteFile(name, data, perm)
+	return w.fs.WriteFile(name, data, perm)
 }
 
 func (w *writer) AppendFile(name string, data []byte) error {
