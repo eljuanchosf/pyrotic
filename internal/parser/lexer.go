@@ -95,8 +95,9 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 		tokens := strings.Split(strings.TrimSpace(item), tokenColon)
 		if len(tokens) != 2 {
 			log.Println("malformed template data for ", data.Name)
-			break
+			continue
 		}
+
 		switch strings.TrimSpace(tokens[0]) {
 		case fieldTo:
 			result.To = strings.TrimSpace(tokens[1])
