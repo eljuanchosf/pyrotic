@@ -21,23 +21,22 @@ func (w *writer) WriteFile(name string, data []byte, perm fs.FileMode) error {
 func (w *writer) AppendFile(name string, data []byte) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
-	file, err := os.OpenFile(name, os.O_APPEND|os.O_WRONLY, FileModeOwnerRWX)
+	file, err := w.fs.OpenFile(name, os.O_APPEND|os.O_WRONLY, FileModeOwnerRWX)
 	if err != nil {
 		log.Println("error opening file", err)
 		return err
 	}
-	defer file.Close()
-	if _, err := file.Write(data); err != nil {
+	if _, err := w.fs.Write(file, data); err != nil {
 		log.Println("error appending data", err)
 		return err
 	}
 	return nil
 }
 
-func (w *writer) Inject(name string, data []byte, inject inject) error {
+func (w *writer) InjectIntoFile(name string, data []byte, inject inject) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
-	source, err := os.ReadFile(name)
+	source, err := w.fs.ReadFile(name)
 	if err != nil {
 		log.Println("error reading file", err)
 		return err
@@ -48,7 +47,7 @@ func (w *writer) Inject(name string, data []byte, inject inject) error {
 		return nil
 	}
 	formatedOutput := injectIntoData(name, source, data, inject)
-	if err := os.WriteFile(name, []byte(formatedOutput), FileModeOwnerRWX); err != nil {
+	if err := w.fs.WriteFile(name, []byte(formatedOutput), FileModeOwnerRWX); err != nil {
 		log.Println("error appending data", err)
 		return err
 	}
@@ -94,4 +93,44 @@ func getMatcher(before, after string) string {
 		return before
 	}
 	return after
+}
+
+func setFileWriter(dryrun bool) fileReadWrite {
+	if dryrun {
+		return &fileLog{}
+	}
+	return &fileWrite{}
+}
+
+func (f *fileWrite) WriteFile(name string, data []byte, perm os.FileMode) error {
+	return os.WriteFile(name, data, perm)
+}
+func (f *fileWrite) ReadFile(name string) ([]byte, error) {
+	return os.ReadFile(name)
+}
+
+func (f *fileWrite) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
+	return os.OpenFile(name, flag, perm)
+}
+
+func (f *fileWrite) Write(file *os.File, b []byte) (n int, err error) {
+	defer file.Close()
+	return file.Write(b)
+}
+
+func (f *fileLog) WriteFile(name string, data []byte, perm os.FileMode) error {
+	log.Println(name, string(data))
+	return nil
+}
+func (f *fileLog) ReadFile(name string) ([]byte, error) {
+	return os.ReadFile(name)
+}
+
+func (f *fileLog) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
+	return os.OpenFile(name, flag, perm)
+}
+
+func (f *fileLog) Write(file *os.File, b []byte) (n int, err error) {
+	log.Println(string(b))
+	return 0, nil
 }

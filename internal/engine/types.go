@@ -8,7 +8,7 @@ import (
 
 type Core struct {
 	parser parser.TmplEngine
-	fwr    fileWriter
+	fwr    writer
 }
 
 type Data struct {
@@ -17,11 +17,18 @@ type Data struct {
 
 type writer struct {
 	mx sync.RWMutex
-	fs files
+	fs fileReadWrite
 }
 
-type fileSvc struct {
+type fileWrite struct {
+	DryRun bool
 }
+
+var _ fileReadWrite = (*fileWrite)(nil)
+
+type fileLog struct{}
+
+var _ fileReadWrite = (*fileLog)(nil)
 
 type inject struct {
 	After   bool

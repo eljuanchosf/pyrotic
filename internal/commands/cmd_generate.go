@@ -35,7 +35,7 @@ func generate(cmd *cobra.Command, args []string) {
 		return
 	}
 	log.Println(chalk.Green("running generator:"), generator)
-	e, err := engine.New(dirPath, templateSuffix)
+	e, err := engine.New(dryrun, dirPath, templateSuffix)
 	if err != nil {
 		log.Println("error creating engine ", err)
 		return

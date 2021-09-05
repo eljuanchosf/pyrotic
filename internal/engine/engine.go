@@ -2,18 +2,19 @@ package engine
 
 import (
 	"log"
+	"sync"
 
 	"github.com/code-gorilla-au/pyrotic/internal/parser"
 )
 
-func New(dirPath string, fileSuffix string) (Core, error) {
+func New(dryrun bool, dirPath string, fileSuffix string) (Core, error) {
 	tmpl, err := parser.New(dirPath, fileSuffix)
 	if err != nil {
 		return Core{}, err
 	}
 	return Core{
 		parser: tmpl,
-		fwr:    &writer{},
+		fwr:    setWriter(dryrun),
 	}, nil
 }
 
@@ -35,7 +36,7 @@ func (c *Core) Generate(data Data) error {
 				return err
 			}
 		case item.Inject:
-			if err := c.fwr.Inject(item.To, item.Output, inject{
+			if err := c.fwr.InjectIntoFile(item.To, item.Output, inject{
 				After:   isAfter(item.Before, item.After),
 				Matcher: getMatcher(item.Before, item.After),
 			}); err != nil {
@@ -52,4 +53,11 @@ func (c *Core) Generate(data Data) error {
 	}
 
 	return nil
+}
+
+func setWriter(dryrun bool) writer {
+	return writer{
+		mx: sync.RWMutex{},
+		fs: setFileWriter(dryrun),
+	}
 }
