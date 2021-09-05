@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"strings"
 	"testing"
 	"text/template"
 
@@ -41,4 +42,64 @@ func Test_withTemplates(t *testing.T) {
 			assert.Equal(t, tt.want, len(list))
 		})
 	}
+}
+
+func TestTmplEngine_Parse_should_render(t *testing.T) {
+	strTmp := `---
+	to: elo
+	---
+	blah
+	`
+	expected := TemplateData{
+		Name: "hello",
+	}
+	root := template.New("root")
+	root, err := root.Parse(strTmp)
+	assert.NoError(t, err)
+	te := &TmplEngine{
+		root:  root,
+		funcs: defaultFuncs,
+	}
+	data, err := te.Parse(expected)
+	assert.NoError(t, err)
+	assert.Equal(t, expected.Name, data[0].Name)
+	assert.Equal(t, "elo", data[0].To)
+	assert.Equal(t, "blah", strings.TrimSpace(string(data[0].Output)))
+}
+func TestTmplEngine_Parse_missing_funcs_should_fail_on_meta_parse(t *testing.T) {
+	strTmp := `---
+	to: {{ "elo" | caseSnake }}
+	---
+	blah
+	`
+	expected := TemplateData{
+		Name: "hello",
+	}
+	root := template.New("root").Funcs(defaultFuncs)
+	root, err := root.Parse(strTmp)
+	assert.NoError(t, err)
+	te := &TmplEngine{
+		root: root,
+	}
+	_, err = te.Parse(expected)
+	assert.Error(t, err)
+}
+
+func TestTmplEngine_Parse_missing_funcs_should_fail_on_template_parse(t *testing.T) {
+	strTmp := `---
+	to: elo
+	---
+	blah {{ "foo" | caseSnake }}
+	`
+	expected := TemplateData{
+		Name: "hello",
+	}
+	root := template.New("root").Funcs(defaultFuncs)
+	root, err := root.Parse(strTmp)
+	assert.NoError(t, err)
+	te := &TmplEngine{
+		root: root,
+	}
+	_, err = te.Parse(expected)
+	assert.Error(t, err)
 }
