@@ -71,7 +71,7 @@ func injectIntoData(name string, source, data []byte, inject inject) []byte {
 		}
 		splitByMatcher = []string{
 			string(source[:(idx - 1)]),
-			string(source[idx:]),
+			fmt.Sprintf("\n%s", string(source[idx:])),
 		}
 	}
 
