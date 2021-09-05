@@ -53,7 +53,7 @@ func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) 
 		}
 		var buf bytes.Buffer
 		wr := bufio.NewWriter(&buf)
-		if t.Execute(wr, data); err != nil {
+		if err := t.Execute(wr, data); err != nil {
 			log.Println("error executing template ", err)
 			return data, err
 		}

@@ -112,11 +112,15 @@ func (f *fileWrite) ReadFile(name string) ([]byte, error) {
 }
 
 func (f *fileWrite) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
-	return os.OpenFile(name, flag, perm)
+	return os.OpenFile(filepath.Clean(name), flag, perm)
 }
 
 func (f *fileWrite) Write(file *os.File, b []byte) (n int, err error) {
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Println("error closing file ", err)
+		}
+	}()
 	return file.Write(b)
 }
 
@@ -129,7 +133,7 @@ func (f *fileLog) ReadFile(name string) ([]byte, error) {
 }
 
 func (f *fileLog) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
-	return os.OpenFile(name, flag, perm)
+	return os.OpenFile(filepath.Clean(name), flag, perm)
 }
 
 func (f *fileLog) Write(file *os.File, b []byte) (n int, err error) {

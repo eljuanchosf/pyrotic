@@ -24,8 +24,3 @@ jobs:
 
       - name: test
         run: go test ./...
-
-      - name: go sec
-        uses: securego/gosec@master
-        with:
-          args: ./...
