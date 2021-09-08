@@ -1,28 +1,33 @@
-package engine
+package writer
 
 import (
 	"fmt"
 	"io/fs"
 	"log"
 	"os"
-	"path/filepath"
 	"strings"
-
-	"github.com/code-gorilla-au/pyrotic/internal/chalk"
+	"sync"
 )
 
 const (
 	FileModeOwnerRWX = 0644
 )
 
+func New(dryrun bool) Write {
+	return Write{
+		mx: sync.RWMutex{},
+		fs: setFileWriter(dryrun),
+	}
+}
+
 // WriteFile thin wrapper to decouple dependency of write file
-func (w *writer) WriteFile(name string, data []byte, perm fs.FileMode) error {
+func (w *Write) WriteFile(name string, data []byte, perm fs.FileMode) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
 	return w.fs.WriteFile(name, data, perm)
 }
 
-func (w *writer) AppendFile(name string, data []byte) error {
+func (w *Write) AppendFile(name string, data []byte) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
 	file, err := w.fs.OpenFile(name, os.O_APPEND|os.O_WRONLY, FileModeOwnerRWX)
@@ -37,7 +42,7 @@ func (w *writer) AppendFile(name string, data []byte) error {
 	return nil
 }
 
-func (w *writer) InjectIntoFile(name string, data []byte, inject inject) error {
+func (w *Write) InjectIntoFile(name string, data []byte, inject inject) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
 	source, err := w.fs.ReadFile(name)
@@ -99,44 +104,4 @@ func setFileWriter(dryrun bool) fileReadWrite {
 		return &fileLog{}
 	}
 	return &fileWrite{}
-}
-
-func (f *fileWrite) WriteFile(name string, data []byte, perm os.FileMode) error {
-	if err := os.MkdirAll(filepath.Dir(name), 0750); err != nil {
-		return err
-	}
-	return os.WriteFile(name, data, perm)
-}
-func (f *fileWrite) ReadFile(name string) ([]byte, error) {
-	return os.ReadFile(name)
-}
-
-func (f *fileWrite) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
-	return os.OpenFile(filepath.Clean(name), flag, perm)
-}
-
-func (f *fileWrite) Write(file *os.File, b []byte) (n int, err error) {
-	defer func() {
-		if err := file.Close(); err != nil {
-			log.Println("error closing file ", err)
-		}
-	}()
-	return file.Write(b)
-}
-
-func (f *fileLog) WriteFile(name string, data []byte, perm os.FileMode) error {
-	log.Println(chalk.Green("logging to console:"), name, fmt.Sprintf("\n%s", string(data)))
-	return nil
-}
-func (f *fileLog) ReadFile(name string) ([]byte, error) {
-	return os.ReadFile(name)
-}
-
-func (f *fileLog) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
-	return os.OpenFile(filepath.Clean(name), flag, perm)
-}
-
-func (f *fileLog) Write(file *os.File, b []byte) (n int, err error) {
-	log.Println(chalk.Green("logging to console:"), file.Name(), fmt.Sprintf("\n%s", string(b)))
-	return 0, nil
 }

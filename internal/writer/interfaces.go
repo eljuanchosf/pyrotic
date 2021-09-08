@@ -1,4 +1,4 @@
-package engine
+package writer
 
 import (
 	"io/fs"
