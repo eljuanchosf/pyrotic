@@ -64,7 +64,7 @@ func injectIntoData(name string, source, data []byte, inject inject) []byte {
 			return source
 		}
 	default:
-		idx := strings.LastIndex(string(source), inject.Matcher)
+		idx := strings.Index(string(source), inject.Matcher)
 		if idx == -1 {
 			log.Printf("injection token %s is not found in file %s", inject.Matcher, name)
 			return source
