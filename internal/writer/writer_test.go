@@ -44,6 +44,32 @@ func Test_injectIntoData(t *testing.T) {
 			},
 			want: []byte("fall of // tokenfart"),
 		},
+		{
+			name: "no token should return source",
+			args: args{
+				name:   "",
+				source: []byte("fall of "),
+				data:   []byte("fart"),
+				inject: Inject{
+					Before: "// token",
+					After:  "",
+				},
+			},
+			want: []byte("fall of "),
+		},
+		{
+			name: "no token should return source",
+			args: args{
+				name:   "",
+				source: []byte("fall of type Ask struct {"),
+				data:   []byte("fart"),
+				inject: Inject{
+					Before: "type Ask struct {",
+					After:  "",
+				},
+			},
+			want: []byte("fall offart\ntype Ask struct {"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
