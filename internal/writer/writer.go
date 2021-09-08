@@ -92,13 +92,6 @@ func isAfter(before string, after string) bool {
 	return len(strings.TrimSpace(after)) > 0
 }
 
-func getMatcher(before, after string) string {
-	if len(strings.TrimSpace(before)) > 0 {
-		return before
-	}
-	return after
-}
-
 func setFileWriter(dryrun bool) fileReadWrite {
 	if dryrun {
 		return &fileLog{}
