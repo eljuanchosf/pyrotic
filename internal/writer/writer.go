@@ -60,7 +60,10 @@ func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 
 func mergeOutputs(name string, source, output []byte, inject Inject) []byte {
 	var splitByMatcher []string
-
+	if !inject.Validate() {
+		log.Printf("at least 1 injection clause must not be empty, before: [%s], after: [%s]", inject.Before, inject.After)
+		return source
+	}
 	switch isAfter(inject.Before, inject.After) {
 	case true:
 		splitByMatcher = strings.SplitAfter(string(source), inject.After)
@@ -97,4 +100,9 @@ func setFileWriter(dryrun bool) fileReadWrite {
 		return &fileLog{}
 	}
 	return &fileWrite{}
+}
+
+// Validate - one clause must be met
+func (i *Inject) Validate() bool {
+	return i.After != "" || i.Before != ""
 }

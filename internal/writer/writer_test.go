@@ -70,6 +70,19 @@ func Test_injectIntoData(t *testing.T) {
 			},
 			want: []byte("fall offart\ntype Ask struct {"),
 		},
+		{
+			name: "no injection clauses should return source",
+			args: args{
+				name:   "",
+				source: []byte("fall of man"),
+				data:   []byte("fart"),
+				inject: Inject{
+					Before: "",
+					After:  "",
+				},
+			},
+			want: []byte("fall of man"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
