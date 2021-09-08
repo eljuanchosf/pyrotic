@@ -42,7 +42,7 @@ func (w *Write) AppendFile(name string, data []byte) error {
 	return nil
 }
 
-func (w *Write) InjectIntoFile(name string, data []byte, inject inject) error {
+func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
 	source, err := w.fs.ReadFile(name)
@@ -58,20 +58,20 @@ func (w *Write) InjectIntoFile(name string, data []byte, inject inject) error {
 	return nil
 }
 
-func injectIntoData(name string, source, data []byte, inject inject) []byte {
+func injectIntoData(name string, source, data []byte, inject Inject) []byte {
 	var splitByMatcher []string
 
-	switch inject.After {
+	switch isAfter(inject.Before, inject.After) {
 	case true:
-		splitByMatcher = strings.SplitAfter(string(source), inject.Matcher)
+		splitByMatcher = strings.SplitAfter(string(source), inject.After)
 		if len(splitByMatcher) != 2 {
-			log.Printf("injection token %s is not found in file %s", inject.Matcher, name)
+			log.Printf("injection token %s is not found in file %s", inject.After, name)
 			return source
 		}
 	default:
-		idx := strings.Index(string(source), inject.Matcher)
+		idx := strings.Index(string(source), inject.Before)
 		if idx == -1 {
-			log.Printf("injection token %s is not found in file %s", inject.Matcher, name)
+			log.Printf("injection token %s is not found in file %s", inject.Before, name)
 			return source
 		}
 		splitByMatcher = []string{
