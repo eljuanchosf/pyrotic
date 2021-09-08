@@ -50,7 +50,7 @@ func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 		log.Println("error reading file", err)
 		return err
 	}
-	formatedOutput := injectIntoData(name, source, data, inject)
+	formatedOutput := mergeOutputs(name, source, data, inject)
 	if err := w.fs.WriteFile(name, []byte(formatedOutput), FileModeOwnerRWX); err != nil {
 		log.Println("error appending data", err)
 		return err
@@ -58,7 +58,7 @@ func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 	return nil
 }
 
-func injectIntoData(name string, source, data []byte, inject Inject) []byte {
+func mergeOutputs(name string, source, output []byte, inject Inject) []byte {
 	var splitByMatcher []string
 
 	switch isAfter(inject.Before, inject.After) {
@@ -82,7 +82,7 @@ func injectIntoData(name string, source, data []byte, inject Inject) []byte {
 
 	formatedOutput := strings.Join([]string{
 		splitByMatcher[0],
-		string(data),
+		string(output),
 		splitByMatcher[1],
 	}, "")
 	return []byte(formatedOutput)
