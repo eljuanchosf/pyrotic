@@ -91,3 +91,51 @@ func Test_injectIntoData(t *testing.T) {
 		})
 	}
 }
+
+func TestInject_Validate(t *testing.T) {
+	type fields struct {
+		Before string
+		After  string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   bool
+	}{
+		{
+			name: "should return false if both are missing",
+			fields: fields{
+				Before: "",
+				After:  "",
+			},
+			want: false,
+		},
+		{
+			name: "should return false if both are missing",
+			fields: fields{
+				Before: "// flash",
+				After:  "",
+			},
+			want: true,
+		},
+		{
+			name: "should return false if both are missing",
+			fields: fields{
+				Before: "",
+				After:  "// thunder",
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			i := &Inject{
+				Before: tt.fields.Before,
+				After:  tt.fields.After,
+			}
+			if got := i.Validate(); got != tt.want {
+				t.Errorf("Inject.Validate() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
