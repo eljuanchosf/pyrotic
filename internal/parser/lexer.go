@@ -45,22 +45,25 @@ func parse(raw string, data TemplateData, funcs template.FuncMap) (TemplateData,
 
 func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
 	parsedMeta := []string{}
+	var buf bytes.Buffer
+	wr := bufio.NewWriter(&buf)
 	for _, item := range meta {
 		t, err := template.New("meta").Funcs(funcs).Parse(item)
 		if err != nil {
 			log.Println("error generating metadata ", err)
 			return data, err
 		}
-		var buf bytes.Buffer
-		wr := bufio.NewWriter(&buf)
+
 		if err := t.Execute(wr, data); err != nil {
 			log.Println("error executing template ", err)
 			return data, err
 		}
+
 		if err := wr.Flush(); err != nil {
 			log.Println("error flushing writer ", err)
 			return data, err
 		}
+
 		parsedMeta = append(parsedMeta, buf.String())
 	}
 	return hydrateData(parsedMeta, data), nil
