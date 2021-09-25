@@ -45,9 +45,10 @@ func parse(raw string, data TemplateData, funcs template.FuncMap) (TemplateData,
 
 func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
 	parsedMeta := []string{}
-	var buf bytes.Buffer
-	wr := bufio.NewWriter(&buf)
+
 	for _, item := range meta {
+		var buf bytes.Buffer
+		wr := bufio.NewWriter(&buf)
 		t, err := template.New("meta").Funcs(funcs).Parse(item)
 		if err != nil {
 			log.Println("error generating metadata ", err)
