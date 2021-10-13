@@ -3,8 +3,8 @@ package parser
 import "text/template"
 
 type TmplEngine struct {
-	root  *template.Template
-	funcs template.FuncMap
+	templates []string
+	funcs     template.FuncMap
 }
 
 type TemplateData struct {
