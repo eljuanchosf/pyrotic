@@ -10,15 +10,21 @@ import (
 
 	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 	"github.com/code-gorilla-au/pyrotic/internal/formats"
+	"github.com/gobuffalo/flect"
 )
 
 const (
-	caseSnake  = "caseSnake"
-	caseKebab  = "caseKebab"
-	casePascal = "casePascal"
-	caseLower  = "caseLower"
-	caseTitle  = "caseTitle"
-	caseCamel  = "caseCamel"
+	caseSnake   = "caseSnake"
+	caseKebab   = "caseKebab"
+	casePascal  = "casePascal"
+	caseLower   = "caseLower"
+	caseTitle   = "caseTitle"
+	caseCamel   = "caseCamel"
+	pluralise   = "pluralise"
+	singularise = "singularise"
+	ordinalize  = "ordinalize"
+	titleize    = "titleize"
+	humanize    = "humanize"
 )
 
 var (
@@ -29,27 +35,31 @@ var (
 		caseLower:  strings.ToLower,
 		caseTitle:  strings.ToTitle,
 		caseCamel:  formats.CaseCamel,
+		// Inflections
+		pluralise:   flect.Pluralize,
+		singularise: flect.Singularize,
+		ordinalize:  flect.Ordinalize,
+		titleize:    flect.Titleize,
+		humanize:    flect.Humanize,
 	}
 )
 
 func New(dirPath string, fileSuffix string) (TmplEngine, error) {
-	tmp := template.New("root").Funcs(defaultFuncs)
-	tmp, err := withTemplates(tmp, fileSuffix, dirPath)
+	tmp, err := withTemplates(fileSuffix, dirPath)
 	if err != nil {
 		log.Println("error loading templates ", err)
 		return TmplEngine{}, err
 	}
 	return TmplEngine{
-		root:  tmp,
-		funcs: defaultFuncs,
+		templates: tmp,
+		funcs:     defaultFuncs,
 	}, nil
 }
 
 func (te *TmplEngine) Parse(data TemplateData) ([]TemplateData, error) {
 	result := []TemplateData{}
-	tmp := te.root.Templates()
-	for _, t := range tmp {
-		newData, err := parse(t.Root.String(), data, te.funcs)
+	for _, t := range te.templates {
+		newData, err := parse(t, data, te.funcs)
 		if err != nil {
 			log.Println("error parsing template ", err)
 			return result, err
@@ -75,23 +85,24 @@ func (te *TmplEngine) Parse(data TemplateData) ([]TemplateData, error) {
 }
 
 // withTemplates - load templates by file path
-func withTemplates(root *template.Template, fileSuffix string, dirPath string) (*template.Template, error) {
-
+func withTemplates(fileSuffix string, dirPath string) ([]string, error) {
+	var rootTemplates []string
 	files, err := os.ReadDir(dirPath)
 	if err != nil {
-		return root, err
+		return rootTemplates, err
 	}
-	var allFiles []string
+
 	for _, file := range files {
 		fileLocation := filepath.Join(dirPath, file.Name())
 		if strings.HasSuffix(file.Name(), fileSuffix) {
 			log.Println(chalk.Green("loading template: "), fileLocation)
-			allFiles = append(allFiles, fileLocation)
+			data, err := os.ReadFile(fileLocation)
+			if err != nil {
+				log.Printf("error reading file %s", fileLocation)
+				return rootTemplates, err
+			}
+			rootTemplates = append(rootTemplates, string(data))
 		}
 	}
-	root, err = root.ParseFiles(allFiles...)
-	if err != nil {
-		return root, err
-	}
-	return root, nil
+	return rootTemplates, nil
 }
