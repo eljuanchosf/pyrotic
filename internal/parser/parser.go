@@ -10,15 +10,21 @@ import (
 
 	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 	"github.com/code-gorilla-au/pyrotic/internal/formats"
+	"github.com/gobuffalo/flect"
 )
 
 const (
-	caseSnake  = "caseSnake"
-	caseKebab  = "caseKebab"
-	casePascal = "casePascal"
-	caseLower  = "caseLower"
-	caseTitle  = "caseTitle"
-	caseCamel  = "caseCamel"
+	caseSnake   = "caseSnake"
+	caseKebab   = "caseKebab"
+	casePascal  = "casePascal"
+	caseLower   = "caseLower"
+	caseTitle   = "caseTitle"
+	caseCamel   = "caseCamel"
+	pluralise   = "pluralise"
+	singularise = "singularise"
+	ordinalize  = "ordinalize"
+	titleize    = "titleize"
+	humanize    = "humanize"
 )
 
 var (
@@ -29,6 +35,12 @@ var (
 		caseLower:  strings.ToLower,
 		caseTitle:  strings.ToTitle,
 		caseCamel:  formats.CaseCamel,
+		// Inflections
+		pluralise:   flect.Pluralize,
+		singularise: flect.Singularize,
+		ordinalize:  flect.Ordinalize,
+		titleize:    flect.Titleize,
+		humanize:    flect.Humanize,
 	}
 )
 

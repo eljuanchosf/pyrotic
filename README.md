@@ -79,6 +79,14 @@ ships with some already built in template funcs, some [examples](example/_templa
 - caseTitle (Titlecase)
 - caseCamel (camelCase)
 
+we also provide some Inflections using [flect](https://github.com/gobuffalo/flect)
+
+- pluralise
+- singularise
+- ordinalize
+- titleize
+- humanize
+
 ## Dev mode
 provides the short file name with logging
 
