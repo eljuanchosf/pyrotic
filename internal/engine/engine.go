@@ -81,10 +81,13 @@ func generateMeta(meta string) map[string]string {
 	list := strings.Split(meta, metaDelimiter)
 	for _, keyVal := range list {
 		rawMeta := strings.Split(keyVal, strings.TrimSpace(metaKeyValueDelimiter))
-		if len(rawMeta) != 0 {
+
+		if len(rawMeta) == 0 {
 			continue
 		}
+
 		result[rawMeta[0]] = rawMeta[1]
 	}
+
 	return result
 }
