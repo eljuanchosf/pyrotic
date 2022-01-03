@@ -15,5 +15,5 @@ type TemplateData struct {
 	Before string
 	After  string
 	Output []byte
-	Meta   map[string]interface{}
+	Meta   map[string]string
 }

@@ -94,7 +94,7 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 	result := TemplateData{
 		Name: data.Name,
 	}
-	tmp := map[string]interface{}{}
+	tmp := map[string]string{}
 	for _, item := range meta {
 		tokens := strings.Split(strings.TrimSpace(item), tokenColon)
 		if len(tokens) != 2 {

@@ -75,8 +75,8 @@ func generateInject(before, after string) writer.Inject {
 	}
 }
 
-func generateMeta(meta string) map[string]interface{} {
-	result := map[string]interface{}{}
+func generateMeta(meta string) map[string]string {
+	result := map[string]string{}
 
 	list := strings.Split(meta, metaDelimiter)
 	for _, keyVal := range list {
