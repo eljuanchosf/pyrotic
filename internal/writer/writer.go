@@ -11,6 +11,7 @@ const (
 	FileModeOwnerRWX = 0644
 )
 
+// New - create a new writer
 func New(dryrun bool) Write {
 	return Write{
 		mx: sync.RWMutex{},
@@ -25,6 +26,7 @@ func (w *Write) WriteFile(name string, data []byte, perm fs.FileMode) error {
 	return w.fs.WriteFile(name, data, perm)
 }
 
+// AppendFile - append data to the end of file
 func (w *Write) AppendFile(name string, data []byte) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
@@ -40,6 +42,8 @@ func (w *Write) AppendFile(name string, data []byte) error {
 	return nil
 }
 
+// InjectIntoFile - inject before, or after a matcher for a source file.
+// If the matcher can't be found, don't do anything to the file
 func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
@@ -59,6 +63,9 @@ func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 	return nil
 }
 
+// setFileWriter - return a writer based on the dry run flag.
+// If the dry fun flag is true, return a writer that logs to stdout,
+// otherwise return a file writer.
 func setFileWriter(dryrun bool) fileReadWrite {
 	if dryrun {
 		return &fileLog{}

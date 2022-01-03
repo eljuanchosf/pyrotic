@@ -19,7 +19,7 @@ type Inject struct {
 	Clause  InjectClause
 }
 
-// Validate - one clause must be met
+// Validate - exactly 1 clause must be met. Matcher must not be empty
 func (i *Inject) Validate() error {
 	hasClause := (i.Clause == InjectBefore || i.Clause == InjectAfter)
 	if !hasClause {

@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+// mergeInjection - injects data before, or after a matcher withhin a source file.
+// if we can't find the matcher, don't do anything to the source file
 func mergeInjection(source, dataInjection []byte, inject Inject) ([]byte, error) {
 	var splitByMatcher []string
 	if err := inject.Validate(); err != nil {
