@@ -129,6 +129,8 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 		}
 	}
 
+	// this will override any values pre-defined in the template,
+	// this is indtended so you are able to have "sane defaults" as well as override via cmd
 	for key, value := range data.Meta {
 		tmp[key] = value
 	}
