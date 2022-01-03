@@ -39,10 +39,7 @@ func (c *Core) Generate(data Data) error {
 				return err
 			}
 		case item.Inject:
-			if err := c.fwr.InjectIntoFile(item.To, item.Output, writer.Inject{
-				Before: item.Before,
-				After:  item.After,
-			}); err != nil {
+			if err := c.fwr.InjectIntoFile(item.To, item.Output, generateInject(item.Before, item.After)); err != nil {
 				log.Println("error appending file ", err)
 				return err
 			}
@@ -56,4 +53,17 @@ func (c *Core) Generate(data Data) error {
 	}
 
 	return nil
+}
+
+func generateInject(before, after string) writer.Inject {
+	if len(before) > 0 {
+		return writer.Inject{
+			Matcher: before,
+			Clause:  writer.InjectBefore,
+		}
+	}
+	return writer.Inject{
+		Matcher: after,
+		Clause:  writer.InjectAfter,
+	}
 }

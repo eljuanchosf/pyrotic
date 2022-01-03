@@ -6,7 +6,7 @@ code generator inspired by https://www.hygen.io/ for golang.
 ## Install
 
 ```
-go get -u github.com/code-gorilla-au/pyrotic
+go install -u github.com/code-gorilla-au/pyrotic
 
 ```
 

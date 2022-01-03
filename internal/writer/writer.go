@@ -1,11 +1,9 @@
 package writer
 
 import (
-	"fmt"
 	"io/fs"
 	"log"
 	"os"
-	"strings"
 	"sync"
 )
 
@@ -13,6 +11,7 @@ const (
 	FileModeOwnerRWX = 0644
 )
 
+// New - create a new writer
 func New(dryrun bool) Write {
 	return Write{
 		mx: sync.RWMutex{},
@@ -27,6 +26,7 @@ func (w *Write) WriteFile(name string, data []byte, perm fs.FileMode) error {
 	return w.fs.WriteFile(name, data, perm)
 }
 
+// AppendFile - append data to the end of file
 func (w *Write) AppendFile(name string, data []byte) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
@@ -42,6 +42,8 @@ func (w *Write) AppendFile(name string, data []byte) error {
 	return nil
 }
 
+// InjectIntoFile - inject before, or after a matcher for a source file.
+// If the matcher can't be found, don't do anything to the file
 func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 	w.mx.Lock()
 	defer w.mx.Unlock()
@@ -50,7 +52,10 @@ func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 		log.Println("error reading file", err)
 		return err
 	}
-	formatedOutput := mergeOutputs(name, source, data, inject)
+	formatedOutput, err := mergeInjection(source, data, inject)
+	if err != nil {
+		log.Printf("%s: file [%s], matcher: [%s], clause [%s]", err, name, inject.Matcher, inject.Clause)
+	}
 	if err := w.fs.WriteFile(name, []byte(formatedOutput), FileModeOwnerRWX); err != nil {
 		log.Println("error appending data", err)
 		return err
@@ -58,51 +63,12 @@ func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 	return nil
 }
 
-func mergeOutputs(name string, source, output []byte, inject Inject) []byte {
-	var splitByMatcher []string
-	if !inject.Validate() {
-		log.Printf("at least 1 injection clause must not be empty, before: [%s], after: [%s]", inject.Before, inject.After)
-		return source
-	}
-	switch isAfter(inject.Before, inject.After) {
-	case true:
-		splitByMatcher = strings.SplitAfter(string(source), inject.After)
-		if len(splitByMatcher) != 2 {
-			log.Printf("injection token %s is not found in file %s", inject.After, name)
-			return source
-		}
-	default:
-		idx := strings.Index(string(source), inject.Before)
-		if idx == -1 {
-			log.Printf("injection token %s is not found in file %s", inject.Before, name)
-			return source
-		}
-		splitByMatcher = []string{
-			string(source[:(idx - 1)]),
-			fmt.Sprintf("\n%s", string(source[idx:])),
-		}
-	}
-
-	formatedOutput := strings.Join([]string{
-		splitByMatcher[0],
-		string(output),
-		splitByMatcher[1],
-	}, "")
-	return []byte(formatedOutput)
-}
-
-func isAfter(before string, after string) bool {
-	return len(strings.TrimSpace(after)) > 0
-}
-
+// setFileWriter - return a writer based on the dry run flag.
+// If the dry fun flag is true, return a writer that logs to stdout,
+// otherwise return a file writer.
 func setFileWriter(dryrun bool) fileReadWrite {
 	if dryrun {
 		return &fileLog{}
 	}
 	return &fileWrite{}
-}
-
-// Validate - one clause must be met
-func (i *Inject) Validate() bool {
-	return i.After != "" || i.Before != ""
 }
