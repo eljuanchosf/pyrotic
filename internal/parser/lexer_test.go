@@ -155,6 +155,31 @@ func Test_hydrateData(t *testing.T) {
 				Meta:   map[string]string{},
 			},
 		},
+		{
+			name: "should skip parse and return with o",
+			args: args{
+				meta: []string{
+					"  to  steel  ",
+				},
+				data: TemplateData{
+					Meta: map[string]string{
+						"foo": "bar",
+					},
+				},
+			},
+			want: TemplateData{
+				Name:   "",
+				To:     "",
+				Append: false,
+				Inject: false,
+				Before: "",
+				After:  "",
+				Output: nil,
+				Meta: map[string]string{
+					"foo": "bar",
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

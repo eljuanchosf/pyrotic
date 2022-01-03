@@ -126,11 +126,13 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 		default:
 			key := strings.TrimSpace(tokens[0])
 			tmp[key] = strings.TrimSpace(tokens[1])
-			if overrideValue, ok := data.Meta[key]; ok {
-				tmp[key] = overrideValue
-			}
 		}
 	}
+
+	for key, value := range data.Meta {
+		tmp[key] = value
+	}
+
 	result.Meta = tmp
 	return result
 }
