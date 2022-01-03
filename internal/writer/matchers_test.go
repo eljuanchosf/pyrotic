@@ -38,7 +38,7 @@ func Test_mergeOutputs(t *testing.T) {
 				source: []byte("fall of // token"),
 				data:   []byte("fart"),
 				inject: Inject{
-					Matcher: "",
+					Matcher: "// token",
 					Clause:  InjectAfter,
 				},
 			},

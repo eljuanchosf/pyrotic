@@ -21,7 +21,11 @@ type Inject struct {
 
 // Validate - one clause must be met
 func (i *Inject) Validate() bool {
-	return (i.Clause == InjectBefore || i.Clause == InjectAfter || len(i.Matcher) <= 0)
+	hasClause := (i.Clause == InjectBefore || i.Clause == InjectAfter)
+	if !hasClause {
+		return false
+	}
+	return len(i.Matcher) > 0
 }
 
 type fileWrite struct {
