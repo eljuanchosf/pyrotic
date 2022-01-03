@@ -32,7 +32,7 @@ func (c *Core) Generate(data Data) error {
 
 	parsedOutput, err := c.parser.Parse(parser.TemplateData{
 		Name: data.Name,
-		Meta: generateMeta(data.Meta),
+		Meta: generateMeta(data.MetaArgs),
 	})
 	if err != nil {
 		return err
@@ -85,8 +85,9 @@ func generateMeta(meta string) map[string]string {
 		if len(rawMeta) == 0 {
 			continue
 		}
-
-		result[rawMeta[0]] = rawMeta[1]
+		key := strings.TrimSpace(rawMeta[0])
+		value := strings.TrimSpace(rawMeta[1])
+		result[key] = value
 	}
 
 	return result

@@ -40,7 +40,7 @@ func generate(cmd *cobra.Command, args []string) {
 		return
 	}
 	startTime := time.Now()
-	err = e.Generate(engine.Data{Name: generateName, Meta: metaArgs})
+	err = e.Generate(engine.Data{Name: generateName, MetaArgs: metaArgs})
 	if err != nil {
 		log.Println("error generating templates ", err)
 		return
