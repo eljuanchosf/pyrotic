@@ -92,6 +92,6 @@ provides the short file name with logging
 
 ```bash
 
-ENV=DEV ./pyrotic -p example/_templates generate fakr
+ENV=DEV ./pyrotic -p example/_templates generate fakr --meta foo=bar,bin=baz
 
 ```
