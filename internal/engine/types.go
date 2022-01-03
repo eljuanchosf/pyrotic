@@ -12,4 +12,5 @@ type Core struct {
 
 type Data struct {
 	Name string
+	Meta string
 }

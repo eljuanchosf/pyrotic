@@ -2,9 +2,15 @@ package engine
 
 import (
 	"log"
+	"strings"
 
 	"github.com/code-gorilla-au/pyrotic/internal/parser"
 	"github.com/code-gorilla-au/pyrotic/internal/writer"
+)
+
+const (
+	metaDelimiter         = ","
+	metaKeyValueDelimiter = "="
 )
 
 func New(dryrun bool, dirPath string, fileSuffix string) (Core, error) {
@@ -26,6 +32,7 @@ func (c *Core) Generate(data Data) error {
 
 	parsedOutput, err := c.parser.Parse(parser.TemplateData{
 		Name: data.Name,
+		Meta: generateMeta(data.Meta),
 	})
 	if err != nil {
 		return err
@@ -66,4 +73,18 @@ func generateInject(before, after string) writer.Inject {
 		Matcher: after,
 		Clause:  writer.InjectAfter,
 	}
+}
+
+func generateMeta(meta string) map[string]interface{} {
+	result := map[string]interface{}{}
+
+	list := strings.Split(meta, metaDelimiter)
+	for _, keyVal := range list {
+		rawMeta := strings.Split(keyVal, strings.TrimSpace(metaKeyValueDelimiter))
+		if len(rawMeta) != 0 {
+			continue
+		}
+		result[rawMeta[0]] = rawMeta[1]
+	}
+	return result
 }
