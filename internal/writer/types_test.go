@@ -10,7 +10,7 @@ func TestInject_Validate(t *testing.T) {
 	tests := []struct {
 		name   string
 		fields fields
-		want   bool
+		want   error
 	}{
 		{
 			name: "should return false if both are missing",
@@ -18,7 +18,7 @@ func TestInject_Validate(t *testing.T) {
 				Matcher: "",
 				Clause:  "",
 			},
-			want: false,
+			want: ErrNoMatchingClause,
 		},
 		{
 			name: "should return false if clause is missing",
@@ -26,15 +26,15 @@ func TestInject_Validate(t *testing.T) {
 				Matcher: "// flash",
 				Clause:  "",
 			},
-			want: false,
+			want: ErrNoMatchingClause,
 		},
 		{
 			name: "should return false if matcher is missing",
 			fields: fields{
 				Matcher: "",
-				Clause:  "// thunder",
+				Clause:  InjectAfter,
 			},
-			want: false,
+			want: ErrNoMatchingExpression,
 		},
 	}
 	for _, tt := range tests {

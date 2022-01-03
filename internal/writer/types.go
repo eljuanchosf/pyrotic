@@ -20,12 +20,15 @@ type Inject struct {
 }
 
 // Validate - one clause must be met
-func (i *Inject) Validate() bool {
+func (i *Inject) Validate() error {
 	hasClause := (i.Clause == InjectBefore || i.Clause == InjectAfter)
 	if !hasClause {
-		return false
+		return ErrNoMatchingClause
 	}
-	return len(i.Matcher) > 0
+	if len(i.Matcher) <= 0 {
+		return ErrNoMatchingExpression
+	}
+	return nil
 }
 
 type fileWrite struct {

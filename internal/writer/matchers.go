@@ -8,8 +8,8 @@ import (
 
 func mergeOutputs(name string, source, output []byte, inject Inject) []byte {
 	var splitByMatcher []string
-	if !inject.Validate() {
-		log.Printf("at least 1 injection clause must not be empty, matcher: [%s], clause: [%s]", inject.Matcher, inject.Clause)
+	if err := inject.Validate(); err != nil {
+		log.Printf("%s, matcher: [%s], clause: [%s]", err, inject.Matcher, inject.Clause)
 		return source
 	}
 	switch inject.Clause == InjectAfter {
