@@ -1,11 +1,9 @@
 package writer
 
 import (
-	"fmt"
 	"io/fs"
 	"log"
 	"os"
-	"strings"
 	"sync"
 )
 
@@ -58,51 +56,9 @@ func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 	return nil
 }
 
-func mergeOutputs(name string, source, output []byte, inject Inject) []byte {
-	var splitByMatcher []string
-	if !inject.Validate() {
-		log.Printf("at least 1 injection clause must not be empty, before: [%s], after: [%s]", inject.Before, inject.After)
-		return source
-	}
-	switch isAfter(inject.Before, inject.After) {
-	case true:
-		splitByMatcher = strings.SplitAfter(string(source), inject.After)
-		if len(splitByMatcher) != 2 {
-			log.Printf("injection token %s is not found in file %s", inject.After, name)
-			return source
-		}
-	default:
-		idx := strings.Index(string(source), inject.Before)
-		if idx == -1 {
-			log.Printf("injection token %s is not found in file %s", inject.Before, name)
-			return source
-		}
-		splitByMatcher = []string{
-			string(source[:(idx - 1)]),
-			fmt.Sprintf("\n%s", string(source[idx:])),
-		}
-	}
-
-	formatedOutput := strings.Join([]string{
-		splitByMatcher[0],
-		string(output),
-		splitByMatcher[1],
-	}, "")
-	return []byte(formatedOutput)
-}
-
-func isAfter(before string, after string) bool {
-	return len(strings.TrimSpace(after)) > 0
-}
-
 func setFileWriter(dryrun bool) fileReadWrite {
 	if dryrun {
 		return &fileLog{}
 	}
 	return &fileWrite{}
-}
-
-// Validate - one clause must be met
-func (i *Inject) Validate() bool {
-	return i.After != "" || i.Before != ""
 }
