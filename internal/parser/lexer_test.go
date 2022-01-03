@@ -36,7 +36,7 @@ func Test_hydrateData(t *testing.T) {
 				Before: "// deepak",
 				After:  "",
 				Output: nil,
-				Meta:   map[string]interface{}{},
+				Meta:   map[string]string{},
 			},
 		},
 		{
@@ -56,7 +56,7 @@ func Test_hydrateData(t *testing.T) {
 				Before: "",
 				After:  "// deepak",
 				Output: nil,
-				Meta:   map[string]interface{}{},
+				Meta:   map[string]string{},
 			},
 		},
 		{
@@ -74,7 +74,7 @@ func Test_hydrateData(t *testing.T) {
 				Inject: false,
 				Before: "",
 				Output: nil,
-				Meta:   map[string]interface{}{},
+				Meta:   map[string]string{},
 			},
 		},
 		{
@@ -93,7 +93,7 @@ func Test_hydrateData(t *testing.T) {
 				Before: "",
 				After:  "",
 				Output: nil,
-				Meta:   map[string]interface{}{},
+				Meta:   map[string]string{},
 			},
 		},
 		{
@@ -112,7 +112,7 @@ func Test_hydrateData(t *testing.T) {
 				Before: "",
 				After:  "",
 				Output: nil,
-				Meta: map[string]interface{}{
+				Meta: map[string]string{
 					"block": "steel",
 				},
 			},
@@ -133,7 +133,7 @@ func Test_hydrateData(t *testing.T) {
 				Before: "",
 				After:  "",
 				Output: nil,
-				Meta:   map[string]interface{}{},
+				Meta:   map[string]string{},
 			},
 		},
 		{
@@ -152,7 +152,32 @@ func Test_hydrateData(t *testing.T) {
 				Before: "",
 				After:  "",
 				Output: nil,
-				Meta:   map[string]interface{}{},
+				Meta:   map[string]string{},
+			},
+		},
+		{
+			name: "should skip parse and return with o",
+			args: args{
+				meta: []string{
+					"  to  steel  ",
+				},
+				data: TemplateData{
+					Meta: map[string]string{
+						"foo": "bar",
+					},
+				},
+			},
+			want: TemplateData{
+				Name:   "",
+				To:     "",
+				Append: false,
+				Inject: false,
+				Before: "",
+				After:  "",
+				Output: nil,
+				Meta: map[string]string{
+					"foo": "bar",
+				},
 			},
 		},
 	}

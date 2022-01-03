@@ -55,6 +55,19 @@ pyrotic -d generate cmd --name setup
 pyrotic --dry-run generate cmd --name setup
 ```
 
+## Pass in meta via cmd
+
+you can pass in meta data via the `--meta` or `-m` flag, which takes in a comma (`,`) delimited list, and overrides the metadata within the template.
+
+```
+
+pyrotic generate fakr --meta foo=bar,bin=baz
+pyrotic generate fakr --m foo=bar,bin=baz
+
+```
+
+
+
 ## Formatter properties
 
 formatter will pick up any of these variables within the `---` block and hydrate the metadata for the template. Any properties matching the signature will be added to the Meta property, for example `foo: bar` will be accessible by `{{ Meta.foo }}`.
@@ -92,6 +105,6 @@ provides the short file name with logging
 
 ```bash
 
-ENV=DEV ./pyrotic -p example/_templates generate fakr
+ENV=DEV ./pyrotic -p example/_templates generate fakr --meta foo=bar,bin=baz
 
 ```

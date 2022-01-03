@@ -94,7 +94,7 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 	result := TemplateData{
 		Name: data.Name,
 	}
-	tmp := map[string]interface{}{}
+	tmp := map[string]string{}
 	for _, item := range meta {
 		tokens := strings.Split(strings.TrimSpace(item), tokenColon)
 		if len(tokens) != 2 {
@@ -128,6 +128,13 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 			tmp[key] = strings.TrimSpace(tokens[1])
 		}
 	}
+
+	// this will override any values pre-defined in the template,
+	// this is indtended so you are able to have "sane defaults" as well as override via cmd
+	for key, value := range data.Meta {
+		tmp[key] = value
+	}
+
 	result.Meta = tmp
 	return result
 }
