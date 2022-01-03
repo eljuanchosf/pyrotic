@@ -2,28 +2,25 @@ package writer
 
 import (
 	"fmt"
-	"log"
 	"strings"
 )
 
-func mergeOutputs(name string, source, output []byte, inject Inject) []byte {
+func mergeInjection(source, dataInjection []byte, inject Inject) ([]byte, error) {
 	var splitByMatcher []string
 	if err := inject.Validate(); err != nil {
-		log.Printf("%s, matcher: [%s], clause: [%s]", err, inject.Matcher, inject.Clause)
-		return source
+		return source, err
 	}
-	switch inject.Clause == InjectAfter {
-	case true:
+
+	switch inject.Clause {
+	case InjectAfter:
 		splitByMatcher = strings.SplitAfter(string(source), inject.Matcher)
 		if len(splitByMatcher) != 2 {
-			log.Printf("injection token %s is not found in file %s", inject.Matcher, name)
-			return source
+			return source, ErrNoMatchingExpression
 		}
-	default:
+	case InjectBefore:
 		idx := strings.Index(string(source), inject.Matcher)
 		if idx == -1 {
-			log.Printf("injection token %s is not found in file %s", inject.Matcher, name)
-			return source
+			return source, ErrNoMatchingExpression
 		}
 		splitByMatcher = []string{
 			string(source[:(idx - 1)]),
@@ -33,8 +30,8 @@ func mergeOutputs(name string, source, output []byte, inject Inject) []byte {
 
 	formatedOutput := strings.Join([]string{
 		splitByMatcher[0],
-		string(output),
+		string(dataInjection),
 		splitByMatcher[1],
 	}, "")
-	return []byte(formatedOutput)
+	return []byte(formatedOutput), nil
 }

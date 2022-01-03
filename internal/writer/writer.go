@@ -48,7 +48,10 @@ func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 		log.Println("error reading file", err)
 		return err
 	}
-	formatedOutput := mergeOutputs(name, source, data, inject)
+	formatedOutput, err := mergeInjection(source, data, inject)
+	if err != nil {
+		log.Printf("%s: file [%s], matcher: [%s], clause [%s]", err, name, inject.Matcher, inject.Clause)
+	}
 	if err := w.fs.WriteFile(name, []byte(formatedOutput), FileModeOwnerRWX); err != nil {
 		log.Println("error appending data", err)
 		return err

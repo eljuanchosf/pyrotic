@@ -14,9 +14,10 @@ func Test_mergeOutputs(t *testing.T) {
 		inject Inject
 	}
 	tests := []struct {
-		name string
-		args args
-		want []byte
+		name    string
+		args    args
+		want    []byte
+		wantErr bool
 	}{
 		{
 			name: "inject before token",
@@ -29,7 +30,8 @@ func Test_mergeOutputs(t *testing.T) {
 					Clause:  InjectBefore,
 				},
 			},
-			want: []byte("fall of fart\n// token"),
+			want:    []byte("fall of fart\n// token"),
+			wantErr: false,
 		},
 		{
 			name: "inject after token",
@@ -42,7 +44,8 @@ func Test_mergeOutputs(t *testing.T) {
 					Clause:  InjectAfter,
 				},
 			},
-			want: []byte("fall of // tokenfart"),
+			want:    []byte("fall of // tokenfart"),
+			wantErr: false,
 		},
 		{
 			name: "no token should return source",
@@ -55,7 +58,8 @@ func Test_mergeOutputs(t *testing.T) {
 					Clause:  "",
 				},
 			},
-			want: []byte("fall of "),
+			want:    []byte("fall of "),
+			wantErr: true,
 		},
 		{
 			name: "no injection clauses should return source",
@@ -68,13 +72,17 @@ func Test_mergeOutputs(t *testing.T) {
 					Clause:  "",
 				},
 			},
-			want: []byte("fall of man"),
+			want:    []byte("fall of man"),
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := mergeOutputs(tt.args.name, tt.args.source, tt.args.data, tt.args.inject)
+			got, err := mergeInjection(tt.args.source, tt.args.data, tt.args.inject)
 			assert.Equal(t, string(tt.want), string(got))
+			if tt.wantErr {
+				assert.Error(t, err)
+			}
 		})
 	}
 }
