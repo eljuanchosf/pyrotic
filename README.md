@@ -2,11 +2,16 @@
 code generator inspired by https://www.hygen.io/ for golang.
 
 
+## Motivation
+Why not use hygen? great question! I would recommend [hygen](https://www.hygen.io/) over this, however [hygen](https://www.hygen.io/) is written in js.
+This project is for people who want to use a code generator and not have to install node.
+
+
 
 ## Install
 
 ```
-go install -u github.com/code-gorilla-au/pyrotic
+go install github.com/code-gorilla-au/pyrotic
 
 ```
 
@@ -55,18 +60,6 @@ pyrotic -d generate cmd --name setup
 pyrotic --dry-run generate cmd --name setup
 ```
 
-## Pass in meta via cmd
-
-you can pass in meta data via the `--meta` or `-m` flag, which takes in a comma (`,`) delimited list, and overrides the metadata within the template.
-
-```
-
-pyrotic generate fakr --meta foo=bar,bin=baz
-pyrotic generate fakr --m foo=bar,bin=baz
-
-```
-
-
 
 ## Formatter properties
 
@@ -89,7 +82,7 @@ ships with some already built in template funcs, some [examples](example/_templa
 - caseKebab (kebab-case)
 - casePascal (PascalCase)
 - caseLower (lowercase)
-- caseTitle (Titlecase)
+- caseTitle (TITLECASE)
 - caseCamel (camelCase)
 
 we also provide some Inflections using [flect](https://github.com/gobuffalo/flect)
@@ -99,6 +92,18 @@ we also provide some Inflections using [flect](https://github.com/gobuffalo/flec
 - ordinalize
 - titleize
 - humanize
+
+## Pass in meta via cmd
+
+you can pass in meta data via the `--meta` or `-m` flag, which takes in a comma (`,`) delimited list, and overrides the `{{ .Meta.<your-property> }}` within the template.
+
+```
+
+pyrotic generate fakr --meta foo=bar,bin=baz
+pyrotic generate fakr --m foo=bar,bin=baz
+
+```
+
 
 ## Dev mode
 provides the short file name with logging
