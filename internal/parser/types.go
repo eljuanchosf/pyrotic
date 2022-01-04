@@ -2,7 +2,7 @@ package parser
 
 import "text/template"
 
-type TmplEngine struct {
+type TemplateEngine struct {
 	templates []string
 	funcs     template.FuncMap
 }

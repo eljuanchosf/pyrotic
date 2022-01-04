@@ -44,19 +44,19 @@ var (
 	}
 )
 
-func New(dirPath string, fileSuffix string) (TmplEngine, error) {
+func New(dirPath string, fileSuffix string) (TemplateEngine, error) {
 	tmp, err := withTemplates(fileSuffix, dirPath)
 	if err != nil {
 		log.Println("error loading templates ", err)
-		return TmplEngine{}, err
+		return TemplateEngine{}, err
 	}
-	return TmplEngine{
+	return TemplateEngine{
 		templates: tmp,
 		funcs:     defaultFuncs,
 	}, nil
 }
 
-func (te *TmplEngine) Parse(data TemplateData) ([]TemplateData, error) {
+func (te *TemplateEngine) Parse(data TemplateData) ([]TemplateData, error) {
 	result := []TemplateData{}
 	for _, t := range te.templates {
 		newData, err := parse(t, data, te.funcs)

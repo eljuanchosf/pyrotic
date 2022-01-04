@@ -52,7 +52,7 @@ func TestTmplEngine_Parse_should_render(t *testing.T) {
 	expected := TemplateData{
 		Name: "hello",
 	}
-	te := &TmplEngine{
+	te := &TemplateEngine{
 		templates: []string{strTmp},
 		funcs:     defaultFuncs,
 	}
@@ -71,7 +71,7 @@ func TestTmplEngine_Parse_missing_funcs_should_fail_on_meta_parse(t *testing.T) 
 	expected := TemplateData{
 		Name: "hello",
 	}
-	te := &TmplEngine{
+	te := &TemplateEngine{
 		templates: []string{strTmp},
 	}
 	_, err := te.Parse(expected)
@@ -87,7 +87,7 @@ func TestTmplEngine_Parse_missing_funcs_should_fail_on_template_parse(t *testing
 	expected := TemplateData{
 		Name: "hello",
 	}
-	te := &TmplEngine{
+	te := &TemplateEngine{
 		templates: []string{strTmp},
 	}
 	_, err := te.Parse(expected)
