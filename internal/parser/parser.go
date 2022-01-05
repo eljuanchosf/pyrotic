@@ -61,7 +61,7 @@ func New(dirPath string, sharedPath string, fileSuffix string) (TemplateEngine, 
 func (te *TemplateEngine) Parse(data TemplateData) ([]TemplateData, error) {
 	result := []TemplateData{}
 	for _, t := range te.templates {
-		newData, err := parse(t, data, te.funcs)
+		newData, err := parse(t, data, te.funcs, te.sharedTemplates)
 		if err != nil {
 			log.Printf(chalk.Red("error parsing template: %s"), err)
 			return result, err

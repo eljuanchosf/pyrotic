@@ -30,14 +30,14 @@ const (
 // stage 1: hydrate the data from the metadata within the "---" block of the template
 //
 // stage 2: parse and execute the template with the hydrated metadata
-func parse(raw string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
+func parse(raw string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) (TemplateData, error) {
 	meta, stringOutput := extractMeta(raw)
 
 	hydratedData, err := generateMetaData(meta, data, funcs)
 	if err != nil {
 		return hydratedData, err
 	}
-	output, err := generateTemplate(string(stringOutput), hydratedData, funcs)
+	output, err := generateTemplate(string(stringOutput), hydratedData, funcs, sharedTmpl)
 	if err != nil {
 		return hydratedData, err
 	}
@@ -74,7 +74,15 @@ func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) 
 
 }
 
-func generateTemplate(output string, data TemplateData, funcs template.FuncMap) ([]byte, error) {
+func generateTemplate(tmplOutput string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) ([]byte, error) {
+
+	output := tmplOutput
+	if data.SharedTemplate != "" {
+		if newOutput, ok := sharedTmpl[data.SharedTemplate]; ok {
+			output = newOutput
+		}
+	}
+
 	tmpl, err := template.New("root").Funcs(funcs).Parse(output)
 	if err != nil {
 		log.Printf(chalk.Red("error parsing output: %s"), err)
