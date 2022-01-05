@@ -46,6 +46,8 @@ pyrotic -p example/_templates generate cmd --name setup
 
 ### Use different file extension
 
+default file extension is `.tmpl`
+
 ```
 pyrotic --extension ".template" generate cmd --name setup
 pyrotic -x ".template" generate cmd --name setup
@@ -60,10 +62,18 @@ pyrotic -d generate cmd --name setup
 pyrotic --dry-run generate cmd --name setup
 ```
 
+### Different shared folder
+
+default shared templates path is `_templates/shared`
+
+```
+pyrotic --shared foo/bar generate cmd --name setup
+pyrotic --s foo/bar generate cmd --name setup
+```
 
 ## Formatter properties
 
-formatter will pick up any of these variables within the `---` block and hydrate the metadata for the template. Any properties matching the signature will be added to the Meta property, for example `foo: bar` will be accessible by `{{ Meta.foo }}`.
+Formatter will pick up any of these variables within the `---` block and hydrate the metadata for the template. Any properties matching the signature will be added to the Meta property, for example `foo: bar` will be accessible by `{{ Meta.foo }}`. View more [examples](example/_templates).
 
 | Property | Type | Default | Example |
 | -------- | ---- | ------- | ------- |
@@ -72,6 +82,12 @@ formatter will pick up any of these variables within the `---` block and hydrate
 | inject: | bool | false | false |
 | before: | string | "" | type config struct |
 | after: | string | "" | // commands |
+
+
+### Using shared templates
+
+In some instances you will want to reuse some templates across multiple generators. This can be done by having a `shared` directory within the `_templates` directory.
+Any templates that are declared in the [shared](example/_templates/shared/config.tmpl) directory will be loading along with the generator. [Reference](example/_templates/fakr/shared_config.tmpl) the shared template within your generator directory in order to inject / append / create file.
 
 
 ## Built in template functions
