@@ -52,7 +52,6 @@ func (c *Core) Generate(data Data) error {
 				Matcher: item.InjectMatcher,
 				Clause:  writer.InjectClause(item.InjectClause),
 			}); err != nil {
-				log.Println("error appending file ", err)
 				return err
 			}
 		default:

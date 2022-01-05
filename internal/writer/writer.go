@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"sync"
+
+	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 )
 
 const (
@@ -49,15 +51,16 @@ func (w *Write) InjectIntoFile(name string, data []byte, inject Inject) error {
 	defer w.mx.Unlock()
 	source, err := w.fs.ReadFile(name)
 	if err != nil {
-		log.Println("error reading file", err)
+		log.Printf(chalk.Red("error injecting data: %s"), err)
 		return err
 	}
 	formatedOutput, err := mergeInjection(source, data, inject)
 	if err != nil {
-		log.Printf("%s: file [%s], matcher: [%s], clause [%s]", err, name, inject.Matcher, inject.Clause)
+		log.Printf(chalk.Red("%s: file [%s], matcher: [%s], clause [%s]"), err, name, inject.Matcher, inject.Clause)
+		return err
 	}
 	if err := w.fs.WriteFile(name, []byte(formatedOutput), FileModeOwnerRWX); err != nil {
-		log.Println("error appending data", err)
+		log.Println(chalk.Red("error writing to file"), err)
 		return err
 	}
 	return nil
