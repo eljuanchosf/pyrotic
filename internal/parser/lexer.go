@@ -12,11 +12,12 @@ import (
 )
 
 const (
-	fieldTo     = "to"
-	fieldAppend = "append"
-	fieldInject = "inject"
-	fieldAfter  = "after"
-	fieldBefore = "before"
+	fieldTo       = "to"
+	fieldAppend   = "append"
+	fieldInject   = "inject"
+	fieldAfter    = "after"
+	fieldBefore   = "before"
+	fieldTemplate = "template"
 )
 
 const (
@@ -137,7 +138,8 @@ func hydrateData(meta []string, data TemplateData) (TemplateData, error) {
 			if _, err := strconv.ParseBool(stringAppend); err != nil {
 				return result, ErrParsingBool
 			}
-
+		case fieldTemplate:
+			result.ParseData.SharedTemplate = strings.TrimSpace(tokens[1])
 		default:
 			key := strings.TrimSpace(tokens[0])
 			tmp[key] = strings.TrimSpace(tokens[1])
