@@ -70,16 +70,8 @@ func (te *TemplateEngine) Parse(data TemplateData) ([]TemplateData, error) {
 			log.Println("error formatting ", err)
 			return result, err
 		}
-		result = append(result, TemplateData{
-			Name:   newData.Name,
-			Append: newData.Append,
-			Inject: newData.Inject,
-			Before: newData.Before,
-			After:  newData.After,
-			To:     newData.To,
-			Output: formattedOut,
-			Meta:   newData.Meta,
-		})
+		newData.Output = formattedOut
+		result = append(result, newData)
 	}
 	return result, nil
 }

@@ -32,21 +32,26 @@ func (c *Core) Generate(data Data) error {
 
 	parsedOutput, err := c.parser.Parse(parser.TemplateData{
 		Name: data.Name,
-		Meta: generateMeta(data.MetaArgs),
+		ParseData: parser.ParseData{
+			Meta: generateMeta(data.MetaArgs),
+		},
 	})
 	if err != nil {
 		return err
 	}
 
 	for _, item := range parsedOutput {
-		switch {
-		case item.Append:
+		switch item.ParseData.Action {
+		case parser.ActionAppend:
 			if err := c.fwr.AppendFile(item.To, item.Output); err != nil {
 				log.Println("error appending file ", err)
 				return err
 			}
-		case item.Inject:
-			if err := c.fwr.InjectIntoFile(item.To, item.Output, generateInject(item.Before, item.After)); err != nil {
+		case parser.ActionCreate:
+			if err := c.fwr.InjectIntoFile(item.To, item.Output, writer.Inject{
+				Matcher: item.InjectMatcher,
+				Clause:  writer.InjectClause(item.InjectClause),
+			}); err != nil {
 				log.Println("error appending file ", err)
 				return err
 			}
@@ -60,19 +65,6 @@ func (c *Core) Generate(data Data) error {
 	}
 
 	return nil
-}
-
-func generateInject(before, after string) writer.Inject {
-	if len(before) > 0 {
-		return writer.Inject{
-			Matcher: before,
-			Clause:  writer.InjectBefore,
-		}
-	}
-	return writer.Inject{
-		Matcher: after,
-		Clause:  writer.InjectAfter,
-	}
 }
 
 func generateMeta(meta string) map[string]string {

@@ -67,7 +67,9 @@ func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) 
 
 		parsedMeta = append(parsedMeta, buf.String())
 	}
-	return hydrateData(parsedMeta, data), nil
+
+	return hydrateData(parsedMeta, data)
+
 }
 
 func generateTemplate(output string, data TemplateData, funcs template.FuncMap) ([]byte, error) {
@@ -90,39 +92,42 @@ func generateTemplate(output string, data TemplateData, funcs template.FuncMap) 
 	return buf.Bytes(), nil
 }
 
-func hydrateData(meta []string, data TemplateData) TemplateData {
+func hydrateData(meta []string, data TemplateData) (TemplateData, error) {
 	result := TemplateData{
-		Name: data.Name,
+		Name:      data.Name,
+		ParseData: data.ParseData,
 	}
+	result.ParseData.Action = ActionCreate
+
 	tmp := map[string]string{}
 	for _, item := range meta {
 		tokens := strings.Split(strings.TrimSpace(item), tokenColon)
 		if len(tokens) != 2 {
-			log.Println("malformed template data for ", data.Name)
-			continue
+			return result, ErrMalformedTemplate
 		}
 
 		switch strings.TrimSpace(tokens[0]) {
 		case fieldTo:
 			result.To = strings.TrimSpace(tokens[1])
 		case fieldAfter:
-			result.After = strings.TrimSpace(tokens[1])
+			result.ParseData.InjectClause = InjectAfter
+			result.ParseData.InjectMatcher = strings.TrimSpace(tokens[1])
 		case fieldBefore:
-			result.Before = strings.TrimSpace(tokens[1])
+			result.ParseData.InjectClause = InjectBefore
+			result.ParseData.InjectMatcher = strings.TrimSpace(tokens[1])
 		case fieldAppend:
+			result.ParseData.Action = ActionAppend
 			stringAppend := strings.TrimSpace(tokens[1])
-			append, err := strconv.ParseBool(stringAppend)
-			if err != nil {
-				log.Println("error parsing bool", err)
+			if _, err := strconv.ParseBool(stringAppend); err != nil {
+				return result, ErrParsingBool
 			}
-			result.Append = append
 		case fieldInject:
+			result.ParseData.Action = ActionInject
 			stringAppend := strings.TrimSpace(tokens[1])
-			inject, err := strconv.ParseBool(stringAppend)
-			if err != nil {
-				log.Println("error parsing bool", err)
+			if _, err := strconv.ParseBool(stringAppend); err != nil {
+				return result, ErrParsingBool
 			}
-			result.Inject = inject
+
 		default:
 			key := strings.TrimSpace(tokens[0])
 			tmp[key] = strings.TrimSpace(tokens[1])
@@ -136,7 +141,7 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 	}
 
 	result.Meta = tmp
-	return result
+	return result, nil
 }
 
 func extractMeta(template string) ([]string, string) {

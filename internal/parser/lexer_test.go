@@ -15,9 +15,11 @@ func Test_hydrateData(t *testing.T) {
 		data TemplateData
 	}
 	tests := []struct {
-		name string
-		args args
-		want TemplateData
+		name    string
+		args    args
+		want    TemplateData
+		wantErr bool
+		err     error
 	}{
 		{
 			name: "should return inject before",
@@ -29,15 +31,19 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "",
-				Append: false,
-				Inject: true,
-				Before: "// deepak",
-				After:  "",
-				Output: nil,
-				Meta:   map[string]string{},
+				Name: "",
+				To:   "",
+				ParseData: ParseData{
+					Action:         ActionInject,
+					InjectClause:   InjectBefore,
+					InjectMatcher:  "// deepak",
+					SharedTemplate: "",
+					Meta: map[string]string{
+						"": "",
+					},
+				},
 			},
+			wantErr: false,
 		},
 		{
 			name: "should return inject after",
@@ -49,15 +55,20 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "",
-				Append: false,
-				Inject: true,
-				Before: "",
-				After:  "// deepak",
+				Name: "",
+				To:   "",
+				ParseData: ParseData{
+					Action:         ActionInject,
+					InjectClause:   InjectAfter,
+					InjectMatcher:  "// deepak",
+					SharedTemplate: "",
+					Meta: map[string]string{
+						"": "",
+					},
+				},
 				Output: nil,
-				Meta:   map[string]string{},
 			},
+			wantErr: false,
 		},
 		{
 			name: "should return append",
@@ -68,14 +79,17 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "",
-				Append: true,
-				Inject: false,
-				Before: "",
+				Name: "",
+				To:   "",
+				ParseData: ParseData{
+					Action: ActionAppend,
+					Meta: map[string]string{
+						"": "",
+					},
+				},
 				Output: nil,
-				Meta:   map[string]string{},
 			},
+			wantErr: false,
 		},
 		{
 			name: "should return to ",
@@ -86,18 +100,17 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "example/screen/foo",
-				Append: false,
-				Inject: false,
-				Before: "",
-				After:  "",
+				Name: "",
+				To:   "example/screen/foo",
+				ParseData: ParseData{
+					Action: ActionCreate,
+				},
 				Output: nil,
-				Meta:   map[string]string{},
 			},
+			wantErr: false,
 		},
 		{
-			name: "should return to ",
+			name: "should return to with meta",
 			args: args{
 				meta: []string{
 					"block: steel",
@@ -105,17 +118,21 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "",
-				Append: false,
-				Inject: false,
-				Before: "",
-				After:  "",
-				Output: nil,
-				Meta: map[string]string{
-					"block": "steel",
+				Name: "",
+				To:   "",
+				ParseData: ParseData{
+					Action:         ActionCreate,
+					InjectClause:   "",
+					InjectMatcher:  "",
+					SharedTemplate: "",
+					Meta: map[string]string{
+						"block": "steel",
+					},
 				},
+
+				Output: nil,
 			},
+			wantErr: false,
 		},
 		{
 			name: "should return to  and remove white spaces",
@@ -126,18 +143,17 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "steel",
-				Append: false,
-				Inject: false,
-				Before: "",
-				After:  "",
+				Name: "",
+				To:   "steel",
+				ParseData: ParseData{
+					Action: ActionCreate,
+				},
 				Output: nil,
-				Meta:   map[string]string{},
 			},
+			wantErr: false,
 		},
 		{
-			name: "should skip parse and return default",
+			name: "should return malformed template",
 			args: args{
 				meta: []string{
 					"  to  steel  ",
@@ -145,45 +161,56 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "",
-				Append: false,
-				Inject: false,
-				Before: "",
-				After:  "",
+				Name: "",
+				To:   "",
+				ParseData: ParseData{
+					Action:         "",
+					InjectClause:   "",
+					InjectMatcher:  "",
+					SharedTemplate: "",
+					Meta: map[string]string{
+						"": "",
+					},
+				},
 				Output: nil,
-				Meta:   map[string]string{},
 			},
+			wantErr: true,
+			err:     ErrMalformedTemplate,
 		},
 		{
-			name: "should skip parse and return with o",
+			name: "should skip parse and return with error",
 			args: args{
 				meta: []string{
 					"  to  steel  ",
 				},
 				data: TemplateData{
-					Meta: map[string]string{
-						"foo": "bar",
+					ParseData: ParseData{
+						Meta: map[string]string{
+							"foo": "bar",
+						},
 					},
 				},
 			},
 			want: TemplateData{
 				Name:   "",
 				To:     "",
-				Append: false,
-				Inject: false,
-				Before: "",
-				After:  "",
 				Output: nil,
-				Meta: map[string]string{
-					"foo": "bar",
+				ParseData: ParseData{
+					Meta: map[string]string{
+						"foo": "bar",
+					},
 				},
 			},
+			wantErr: true,
+			err:     ErrMalformedTemplate,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := hydrateData(tt.args.meta, tt.args.data)
+			got, err := hydrateData(tt.args.meta, tt.args.data)
+			if tt.wantErr {
+				assert.Equal(t, tt.err, err)
+			}
 			gotJSON, err := json.Marshal(&got)
 			assert.NoError(t, err)
 			wantJSON, err := json.Marshal(tt.want)
