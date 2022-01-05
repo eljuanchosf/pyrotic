@@ -6,15 +6,15 @@ import (
 
 var (
 	// root vars
-	templatePath   = "_templates"
-	templateSuffix = ".tmpl"
-	metaArgs       = ""
-	dryrun         = false
-	version        = "v.dev-1.0.0"
+	flagTemplatePath   = "_templates"
+	flagTemplateSuffix = ".tmpl"
+	flagMetaArgs       = ""
+	flagDryrun         = false
+	flagGeneratorName  string
 )
 
-var (
-	generateName string
+const (
+	version = "v.dev-1.0.0"
 )
 
 var rootCmd = &cobra.Command{
@@ -24,15 +24,15 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&templatePath, "path", "p", "_templates", "templates path eg: _templates")
-	rootCmd.PersistentFlags().StringVarP(&templateSuffix, "extension", "x", ".tmpl", "template extension eg: *.tmpl")
-	rootCmd.PersistentFlags().StringVarP(&metaArgs, "meta", "m", "", "pass meta arguments to template. Meta arguments passed via command line will overwrite emplate args. Use a comma delimiter to provide multiple arguments, eg: --meta foo=bar,bin=baz")
-	rootCmd.PersistentFlags().BoolVarP(&dryrun, "dry-run", "d", false, "run the generator in dry run mode")
+	rootCmd.PersistentFlags().StringVarP(&flagTemplatePath, "path", "p", "_templates", "templates path eg: _templates")
+	rootCmd.PersistentFlags().StringVarP(&flagTemplateSuffix, "extension", "x", ".tmpl", "template extension eg: *.tmpl")
+	rootCmd.PersistentFlags().StringVarP(&flagMetaArgs, "meta", "m", "", "pass meta arguments to template. Meta arguments passed via command line will overwrite emplate args. Use a comma delimiter to provide multiple arguments, eg: --meta foo=bar,bin=baz")
+	rootCmd.PersistentFlags().BoolVarP(&flagDryrun, "dry-run", "d", false, "run the generator in dry run mode")
 }
 
 func Execute() error {
 	generate := generateCmd()
-	generate.PersistentFlags().StringVarP(&generateName, "name", "n", "newGeneratedName", "name of the code generation")
+	generate.PersistentFlags().StringVarP(&flagGeneratorName, "name", "n", "newGeneratedName", "name of the code generator eg: --name gen")
 	rootCmd.AddCommand(generate)
 	// add commands
 	rootCmd.AddCommand(versionCmd())
