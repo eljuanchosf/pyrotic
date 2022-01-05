@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+
+	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 )
 
 const (
@@ -75,18 +77,18 @@ func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) 
 func generateTemplate(output string, data TemplateData, funcs template.FuncMap) ([]byte, error) {
 	tmpl, err := template.New("root").Funcs(funcs).Parse(output)
 	if err != nil {
-		log.Println("error parsing output ", err)
+		log.Printf(chalk.Red("error parsing output: %s"), err)
 		return nil, err
 	}
 
 	var buf bytes.Buffer
 	wr := bufio.NewWriter(&buf)
 	if err := tmpl.Execute(wr, data); err != nil {
-		log.Println("error executing template ", err)
+		log.Printf(chalk.Red("error executing template: %s"), err)
 		return nil, err
 	}
 	if err := wr.Flush(); err != nil {
-		log.Println("error flushing writer ", err)
+		log.Printf(chalk.Red("error flushing writer: %s"), err)
 		return buf.Bytes(), err
 	}
 	return buf.Bytes(), nil

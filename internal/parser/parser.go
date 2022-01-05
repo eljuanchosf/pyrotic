@@ -47,7 +47,7 @@ var (
 func New(dirPath string, fileSuffix string) (TemplateEngine, error) {
 	tmp, err := withTemplates(fileSuffix, dirPath)
 	if err != nil {
-		log.Println("error loading templates ", err)
+		log.Printf(chalk.Red("error loading templates: %s"), err)
 		return TemplateEngine{}, err
 	}
 	return TemplateEngine{
@@ -61,13 +61,13 @@ func (te *TemplateEngine) Parse(data TemplateData) ([]TemplateData, error) {
 	for _, t := range te.templates {
 		newData, err := parse(t, data, te.funcs)
 		if err != nil {
-			log.Println("error parsing template ", err)
+			log.Printf(chalk.Red("error parsing template: %s"), err)
 			return result, err
 		}
 
 		formattedOut, err := format.Source(newData.Output)
 		if err != nil {
-			log.Println("error formatting ", err)
+			log.Printf(chalk.Red("error formatting: %s"), err)
 			return result, err
 		}
 		newData.Output = formattedOut
@@ -90,7 +90,7 @@ func withTemplates(fileSuffix string, dirPath string) ([]string, error) {
 			log.Println(chalk.Green("loading template: "), fileLocation)
 			data, err := os.ReadFile(fileLocation)
 			if err != nil {
-				log.Printf("error reading file %s", fileLocation)
+				log.Printf(chalk.Red("error reading file %s"), fileLocation)
 				return rootTemplates, err
 			}
 			rootTemplates = append(rootTemplates, string(data))

@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 )
 
 func (f *fileWrite) WriteFile(name string, data []byte, perm os.FileMode) error {
@@ -24,7 +26,7 @@ func (f *fileWrite) OpenFile(name string, flag int, perm fs.FileMode) (*os.File,
 func (f *fileWrite) Write(file *os.File, b []byte) (n int, err error) {
 	defer func() {
 		if err := file.Close(); err != nil {
-			log.Println("error closing file ", err)
+			log.Println(chalk.Red("error closing file: %s"), err)
 		}
 	}()
 	return file.Write(b)
