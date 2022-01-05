@@ -11,7 +11,6 @@ func Test_withTemplates(t *testing.T) {
 	type args struct {
 		fileSuffix string
 		dirPath    string
-		sharedPath string
 	}
 	tests := []struct {
 		name    string
@@ -31,7 +30,7 @@ func Test_withTemplates(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := withTemplates(tt.args.fileSuffix, tt.args.sharedPath, tt.args.dirPath)
+			got, err := withTemplates(tt.args.dirPath, tt.args.fileSuffix)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("withTemplates() error = %v, wantErr %v", err, tt.wantErr)
 				return

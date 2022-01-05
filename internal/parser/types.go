@@ -3,8 +3,9 @@ package parser
 import "text/template"
 
 type TemplateEngine struct {
-	templates []string
-	funcs     template.FuncMap
+	templates       []string
+	sharedTemplates []string
+	funcs           template.FuncMap
 }
 
 type TemplateData struct {
