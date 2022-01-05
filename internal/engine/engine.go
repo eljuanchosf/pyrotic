@@ -14,11 +14,11 @@ const (
 	metaKeyValueDelimiter = "="
 )
 
-func New(dryrun bool, dirPath string, fileSuffix string) (Core, error) {
+func New(dryrun bool, dirPath string, sharedPath string, fileSuffix string) (Core, error) {
 	if dryrun {
 		log.Println(chalk.Cyan("DRYRUN MODE"))
 	}
-	tmpl, err := parser.New(dirPath, fileSuffix)
+	tmpl, err := parser.New(dirPath, sharedPath, fileSuffix)
 	if err != nil {
 		return Core{}, err
 	}

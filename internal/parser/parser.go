@@ -44,8 +44,8 @@ var (
 	}
 )
 
-func New(dirPath string, fileSuffix string) (TemplateEngine, error) {
-	tmp, err := withTemplates(fileSuffix, dirPath)
+func New(dirPath string, sharedPath string, fileSuffix string) (TemplateEngine, error) {
+	tmp, err := withTemplates(dirPath, sharedPath, fileSuffix)
 	if err != nil {
 		log.Printf(chalk.Red("error loading templates: %s"), err)
 		return TemplateEngine{}, err
@@ -77,17 +77,31 @@ func (te *TemplateEngine) Parse(data TemplateData) ([]TemplateData, error) {
 }
 
 // withTemplates - load templates by file path
-func withTemplates(fileSuffix string, dirPath string) ([]string, error) {
+func withTemplates(dirPath string, sharedPath string, fileSuffix string) ([]string, error) {
 	var rootTemplates []string
 	files, err := os.ReadDir(dirPath)
 	if err != nil {
 		return rootTemplates, err
 	}
 
+	sharedFiles, _ := os.ReadDir(sharedPath)
+
 	for _, file := range files {
 		fileLocation := filepath.Join(dirPath, file.Name())
 		if strings.HasSuffix(file.Name(), fileSuffix) {
 			log.Println(chalk.Green("loading template: "), fileLocation)
+			data, err := os.ReadFile(fileLocation)
+			if err != nil {
+				log.Printf(chalk.Red("error reading file %s"), fileLocation)
+				return rootTemplates, err
+			}
+			rootTemplates = append(rootTemplates, string(data))
+		}
+	}
+	for _, file := range sharedFiles {
+		fileLocation := filepath.Join(sharedPath, file.Name())
+		if strings.HasSuffix(file.Name(), fileSuffix) {
+			log.Println(chalk.Green("loading shared template: "), fileLocation)
 			data, err := os.ReadFile(fileLocation)
 			if err != nil {
 				log.Printf(chalk.Red("error reading file %s"), fileLocation)
