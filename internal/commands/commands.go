@@ -11,6 +11,7 @@ var (
 	flagMetaArgs       = ""
 	flagDryrun         = false
 	flagGeneratorName  string
+	flagSharedFolder   = "shared"
 )
 
 const (
@@ -27,6 +28,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&flagTemplatePath, "path", "p", "_templates", "templates path eg: _templates")
 	rootCmd.PersistentFlags().StringVarP(&flagTemplateSuffix, "extension", "x", ".tmpl", "template extension eg: *.tmpl")
 	rootCmd.PersistentFlags().StringVarP(&flagMetaArgs, "meta", "m", "", "pass meta arguments to template. Meta arguments passed via command line will overwrite emplate args. Use a comma delimiter to provide multiple arguments, eg: --meta foo=bar,bin=baz")
+	rootCmd.PersistentFlags().StringVarP(&flagSharedFolder, "shared", "s", "shared", "shared template folder name, defaults to shared")
 	rootCmd.PersistentFlags().BoolVarP(&flagDryrun, "dry-run", "d", false, "run the generator in dry run mode")
 }
 
