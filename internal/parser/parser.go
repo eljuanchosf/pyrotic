@@ -73,7 +73,7 @@ func (te *TemplateEngine) Parse(data TemplateData) ([]TemplateData, error) {
 		newData.Output = formattedOut
 		result = append(result, newData)
 	}
-	return result, nil
+	return orderTemplateData(result), nil
 }
 
 // withTemplates - load templates by file path
@@ -97,4 +97,26 @@ func withTemplates(fileSuffix string, dirPath string) ([]string, error) {
 		}
 	}
 	return rootTemplates, nil
+}
+
+func orderTemplateData(data []TemplateData) []TemplateData {
+	create := []TemplateData{}
+	app := []TemplateData{}
+	inject := []TemplateData{}
+
+	for _, tmp := range data {
+		switch tmp.Action {
+		case ActionCreate:
+			create = append(create, tmp)
+		case ActionInject:
+			inject = append(inject, tmp)
+		case ActionAppend:
+			app = append(app, tmp)
+		}
+	}
+	result := []TemplateData{}
+	result = append(result, create...)
+	result = append(result, inject...)
+	result = append(result, app...)
+	return result
 }
