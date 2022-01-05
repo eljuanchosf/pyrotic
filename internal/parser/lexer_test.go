@@ -34,13 +34,10 @@ func Test_hydrateData(t *testing.T) {
 				Name: "",
 				To:   "",
 				ParseData: ParseData{
-					Action:         ActionInject,
-					InjectClause:   InjectBefore,
-					InjectMatcher:  "// deepak",
-					SharedTemplate: "",
-					Meta: map[string]string{
-						"": "",
-					},
+					Action:        ActionInject,
+					InjectClause:  InjectBefore,
+					InjectMatcher: "// deepak",
+					Meta:          map[string]string{},
 				},
 			},
 			wantErr: false,
@@ -58,13 +55,10 @@ func Test_hydrateData(t *testing.T) {
 				Name: "",
 				To:   "",
 				ParseData: ParseData{
-					Action:         ActionInject,
-					InjectClause:   InjectAfter,
-					InjectMatcher:  "// deepak",
-					SharedTemplate: "",
-					Meta: map[string]string{
-						"": "",
-					},
+					Action:        ActionInject,
+					InjectClause:  InjectAfter,
+					InjectMatcher: "// deepak",
+					Meta:          map[string]string{},
 				},
 				Output: nil,
 			},
@@ -79,20 +73,16 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name: "",
-				To:   "",
 				ParseData: ParseData{
 					Action: ActionAppend,
-					Meta: map[string]string{
-						"": "",
-					},
+					Meta:   map[string]string{},
 				},
 				Output: nil,
 			},
 			wantErr: false,
 		},
 		{
-			name: "should return to ",
+			name: "should return to",
 			args: args{
 				meta: []string{
 					"to: example/screen/foo",
@@ -104,6 +94,7 @@ func Test_hydrateData(t *testing.T) {
 				To:   "example/screen/foo",
 				ParseData: ParseData{
 					Action: ActionCreate,
+					Meta:   map[string]string{},
 				},
 				Output: nil,
 			},
@@ -135,7 +126,7 @@ func Test_hydrateData(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "should return to  and remove white spaces",
+			name: "should return to and remove white spaces",
 			args: args{
 				meta: []string{
 					"  to  : steel  ",
@@ -147,6 +138,7 @@ func Test_hydrateData(t *testing.T) {
 				To:   "steel",
 				ParseData: ParseData{
 					Action: ActionCreate,
+					Meta:   map[string]string{},
 				},
 				Output: nil,
 			},
@@ -164,13 +156,10 @@ func Test_hydrateData(t *testing.T) {
 				Name: "",
 				To:   "",
 				ParseData: ParseData{
-					Action:         "",
+					Action:         ActionCreate,
 					InjectClause:   "",
 					InjectMatcher:  "",
 					SharedTemplate: "",
-					Meta: map[string]string{
-						"": "",
-					},
 				},
 				Output: nil,
 			},
@@ -196,6 +185,7 @@ func Test_hydrateData(t *testing.T) {
 				To:     "",
 				Output: nil,
 				ParseData: ParseData{
+					Action: ActionCreate,
 					Meta: map[string]string{
 						"foo": "bar",
 					},
@@ -203,6 +193,34 @@ func Test_hydrateData(t *testing.T) {
 			},
 			wantErr: true,
 			err:     ErrMalformedTemplate,
+		},
+		{
+			name: "should return err parsing bool",
+			args: args{
+				meta: []string{
+					"inject: flash gordon",
+				},
+				data: TemplateData{
+					ParseData: ParseData{
+						Meta: map[string]string{
+							"foo": "bar",
+						},
+					},
+				},
+			},
+			want: TemplateData{
+				Name:   "",
+				To:     "",
+				Output: nil,
+				ParseData: ParseData{
+					Action: ActionInject,
+					Meta: map[string]string{
+						"foo": "bar",
+					},
+				},
+			},
+			wantErr: true,
+			err:     ErrParsingBool,
 		},
 	}
 	for _, tt := range tests {
