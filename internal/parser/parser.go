@@ -125,8 +125,8 @@ func withSharedTemplates(dirPath string, fileSuffix string) (map[string]string, 
 
 func orderTemplateData(data []TemplateData) []TemplateData {
 	create := []TemplateData{}
-	app := []TemplateData{}
 	inject := []TemplateData{}
+	app := []TemplateData{}
 
 	for _, tmp := range data {
 		switch tmp.Action {
