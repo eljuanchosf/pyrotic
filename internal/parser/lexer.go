@@ -53,17 +53,17 @@ func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) 
 		wr := bufio.NewWriter(&buf)
 		t, err := template.New("meta").Funcs(funcs).Parse(item)
 		if err != nil {
-			log.Println("error generating metadata ", err)
+			log.Printf(chalk.Red("error generating metadata %s"), err)
 			return data, err
 		}
 
 		if err := t.Execute(wr, data); err != nil {
-			log.Println("error executing template ", err)
+			log.Printf(chalk.Red("error executing template %s"), err)
 			return data, err
 		}
 
 		if err := wr.Flush(); err != nil {
-			log.Println("error flushing writer ", err)
+			log.Printf(chalk.Red("error flushing writer %s"), err)
 			return data, err
 		}
 

@@ -4,6 +4,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 	"github.com/code-gorilla-au/pyrotic/internal/parser"
 	"github.com/code-gorilla-au/pyrotic/internal/writer"
 )
@@ -15,7 +16,7 @@ const (
 
 func New(dryrun bool, dirPath string, fileSuffix string) (Core, error) {
 	if dryrun {
-		log.Println("DRYRUN MODE")
+		log.Println(chalk.Cyan("DRYRUN MODE"))
 	}
 	tmpl, err := parser.New(dirPath, fileSuffix)
 	if err != nil {
