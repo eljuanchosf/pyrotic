@@ -4,7 +4,7 @@ import "text/template"
 
 type TemplateEngine struct {
 	templates       []string
-	sharedTemplates []string
+	sharedTemplates map[string]string
 	funcs           template.FuncMap
 }
 
