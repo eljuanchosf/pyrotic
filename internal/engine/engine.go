@@ -48,7 +48,7 @@ func (c *Core) Generate(data Data) error {
 				log.Println("error appending file ", err)
 				return err
 			}
-		case parser.ActionCreate:
+		case parser.ActionInject:
 			if err := c.fwr.InjectIntoFile(item.To, item.Output, writer.Inject{
 				Matcher: item.InjectMatcher,
 				Clause:  writer.InjectClause(item.InjectClause),
