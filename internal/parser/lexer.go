@@ -12,12 +12,11 @@ import (
 )
 
 const (
-	fieldTo       = "to"
-	fieldAppend   = "append"
-	fieldInject   = "inject"
-	fieldAfter    = "after"
-	fieldBefore   = "before"
-	fieldTemplate = "template"
+	fieldTo     = "to"
+	fieldAppend = "append"
+	fieldInject = "inject"
+	fieldAfter  = "after"
+	fieldBefore = "before"
 )
 
 const (
@@ -82,10 +81,8 @@ func generateTemplate(tmplOutput string, data TemplateData, funcs template.FuncM
 		return nil, err
 	}
 
-	if data.SharedTemplate != "" {
-		if partialOutput, ok := sharedTmpl[data.SharedTemplate]; ok {
-			tmpl.New(data.SharedTemplate).Funcs(funcs).Parse(partialOutput)
-		}
+	for tmplName, tmplOutput := range sharedTmpl {
+		tmpl.New(tmplName).Funcs(funcs).Parse(tmplOutput)
 	}
 
 	var buf bytes.Buffer
@@ -136,8 +133,6 @@ func hydrateData(meta []string, data TemplateData) (TemplateData, error) {
 			if _, err := strconv.ParseBool(stringAppend); err != nil {
 				return result, ErrParsingBool
 			}
-		case fieldTemplate:
-			result.ParseData.SharedTemplate = strings.TrimSpace(tokens[1])
 		default:
 			key := strings.TrimSpace(tokens[0])
 			tmp[key] = strings.TrimSpace(tokens[1])

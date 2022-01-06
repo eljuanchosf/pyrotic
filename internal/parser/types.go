@@ -31,9 +31,8 @@ const (
 )
 
 type ParseData struct {
-	Action         ParseActions
-	InjectClause   InjectClause
-	InjectMatcher  string
-	SharedTemplate string
-	Meta           map[string]string
+	Action        ParseActions
+	InjectClause  InjectClause
+	InjectMatcher string
+	Meta          map[string]string
 }
