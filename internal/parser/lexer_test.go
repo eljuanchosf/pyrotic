@@ -304,7 +304,7 @@ func Test_extractMeta(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := extractMeta(tt.args.output)
+			got, got1 := extractMetaDataFromTemplate(tt.args.output)
 			if !reflect.DeepEqual(got, tt.meta) {
 				t.Errorf("extractMeta() got = %v, want %v", got, tt.meta)
 			}

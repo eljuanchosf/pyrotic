@@ -32,9 +32,9 @@ const (
 //
 // stage 2: parse and execute the template with the hydrated metadata
 func parse(raw string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) (TemplateData, error) {
-	meta, stringOutput := extractMeta(raw)
+	meta, stringOutput := extractMetaDataFromTemplate(raw)
 
-	hydratedData, err := generateMetaData(meta, data, funcs)
+	hydratedData, err := generateParseData(meta, data, funcs)
 	if err != nil {
 		return hydratedData, err
 	}
@@ -46,7 +46,7 @@ func parse(raw string, data TemplateData, funcs template.FuncMap, sharedTmpl map
 	return hydratedData, nil
 }
 
-func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
+func generateParseData(meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
 	parsedMeta := []string{}
 
 	for _, item := range meta {
@@ -156,7 +156,7 @@ func hydrateData(meta []string, data TemplateData) (TemplateData, error) {
 	return result, nil
 }
 
-func extractMeta(template string) ([]string, string) {
+func extractMetaDataFromTemplate(template string) ([]string, string) {
 	rawOut := strings.Split(template, tokenNewLine)
 	meta := []string{}
 	output := []string{}
