@@ -44,48 +44,42 @@ var (
 	}
 )
 
-func New(dirPath string, fileSuffix string) (TmplEngine, error) {
-	tmp, err := withTemplates(fileSuffix, dirPath)
+func New(dirPath string, sharedPath string, fileSuffix string) (TemplateEngine, error) {
+	tmp, err := withTemplates(dirPath, fileSuffix)
 	if err != nil {
-		log.Println("error loading templates ", err)
-		return TmplEngine{}, err
+		log.Printf(chalk.Red("error loading templates: %s"), err)
+		return TemplateEngine{}, err
 	}
-	return TmplEngine{
-		templates: tmp,
-		funcs:     defaultFuncs,
+	sharedTmp, _ := withSharedTemplates(sharedPath, fileSuffix)
+	return TemplateEngine{
+		templates:       tmp,
+		sharedTemplates: sharedTmp,
+		funcs:           defaultFuncs,
 	}, nil
 }
 
-func (te *TmplEngine) Parse(data TemplateData) ([]TemplateData, error) {
+func (te *TemplateEngine) Parse(data TemplateData) ([]TemplateData, error) {
 	result := []TemplateData{}
 	for _, t := range te.templates {
-		newData, err := parse(t, data, te.funcs)
+		newData, err := parse(t, data, te.funcs, te.sharedTemplates)
 		if err != nil {
-			log.Println("error parsing template ", err)
+			log.Printf(chalk.Red("error parsing template: %s"), err)
 			return result, err
 		}
 
 		formattedOut, err := format.Source(newData.Output)
 		if err != nil {
-			log.Println("error formatting ", err)
+			log.Printf(chalk.Red("error formatting: %s"), err)
 			return result, err
 		}
-		result = append(result, TemplateData{
-			Name:   newData.Name,
-			Append: newData.Append,
-			Inject: newData.Inject,
-			Before: newData.Before,
-			After:  newData.After,
-			To:     newData.To,
-			Output: formattedOut,
-			Meta:   newData.Meta,
-		})
+		newData.Output = formattedOut
+		result = append(result, newData)
 	}
-	return result, nil
+	return orderTemplateData(result), nil
 }
 
 // withTemplates - load templates by file path
-func withTemplates(fileSuffix string, dirPath string) ([]string, error) {
+func withTemplates(dirPath string, fileSuffix string) ([]string, error) {
 	var rootTemplates []string
 	files, err := os.ReadDir(dirPath)
 	if err != nil {
@@ -98,11 +92,55 @@ func withTemplates(fileSuffix string, dirPath string) ([]string, error) {
 			log.Println(chalk.Green("loading template: "), fileLocation)
 			data, err := os.ReadFile(fileLocation)
 			if err != nil {
-				log.Printf("error reading file %s", fileLocation)
+				log.Printf(chalk.Red("error reading file %s"), fileLocation)
 				return rootTemplates, err
 			}
 			rootTemplates = append(rootTemplates, string(data))
 		}
 	}
 	return rootTemplates, nil
+}
+
+func withSharedTemplates(dirPath string, fileSuffix string) (map[string]string, error) {
+	rootTemplates := map[string]string{}
+	files, err := os.ReadDir(dirPath)
+	if err != nil {
+		return rootTemplates, err
+	}
+
+	for _, file := range files {
+		fileLocation := filepath.Join(dirPath, file.Name())
+		if strings.HasSuffix(file.Name(), fileSuffix) {
+			log.Println(chalk.Purple("loading shared template: "), fileLocation)
+			data, err := os.ReadFile(fileLocation)
+			if err != nil {
+				log.Printf(chalk.Red("error reading file %s"), fileLocation)
+				return rootTemplates, err
+			}
+			rootTemplates[fileLocation] = string(data)
+		}
+	}
+	return rootTemplates, nil
+}
+
+func orderTemplateData(data []TemplateData) []TemplateData {
+	create := []TemplateData{}
+	inject := []TemplateData{}
+	app := []TemplateData{}
+
+	for _, tmp := range data {
+		switch tmp.Action {
+		case ActionCreate:
+			create = append(create, tmp)
+		case ActionInject:
+			inject = append(inject, tmp)
+		case ActionAppend:
+			app = append(app, tmp)
+		}
+	}
+	result := []TemplateData{}
+	result = append(result, create...)
+	result = append(result, inject...)
+	result = append(result, app...)
+	return result
 }

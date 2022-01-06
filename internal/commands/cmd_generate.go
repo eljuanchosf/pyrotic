@@ -26,23 +26,27 @@ func generate(cmd *cobra.Command, args []string) {
 		log.Println("at least 1 generator name must be provided")
 		return
 	}
+
 	generator := args[0]
-	dirPath := filepath.Join(templatePath, generator)
+	dirPath := filepath.Join(flagTemplatePath, generator)
 	_, err := os.ReadDir(dirPath)
 	if err != nil {
 		log.Println("generator not found:", generator)
 		return
 	}
+
+	sharedPath := filepath.Join(flagTemplatePath, flagSharedFolder)
+
 	log.Println(chalk.Green("running generator:"), generator)
-	e, err := engine.New(dryrun, dirPath, templateSuffix)
+	e, err := engine.New(flagDryrun, dirPath, sharedPath, flagTemplateSuffix)
 	if err != nil {
 		log.Println("error creating engine ", err)
 		return
 	}
+
 	startTime := time.Now()
-	err = e.Generate(engine.Data{Name: generateName, MetaArgs: metaArgs})
+	err = e.Generate(engine.Data{Name: flagGeneratorName, MetaArgs: flagMetaArgs})
 	if err != nil {
-		log.Println("error generating templates ", err)
 		return
 	}
 	log.Println(chalk.Green("generated in "), time.Since(startTime))

@@ -21,8 +21,8 @@ func initCmd() *cobra.Command {
 }
 
 func initFunc(cmd *cobra.Command, args []string) {
-	log.Println(chalk.Green("creating initial setup"), templatePath)
-	dirPath := path.Join(templatePath, "new", fmt.Sprintf("new%s", templateSuffix))
+	log.Println(chalk.Green("creating initial setup"), flagTemplatePath)
+	dirPath := path.Join(flagTemplatePath, "new", fmt.Sprintf("new%s", flagTemplateSuffix))
 	if err := os.MkdirAll(filepath.Dir(dirPath), 0750); err != nil {
 		log.Println("error creating setup", err)
 		return

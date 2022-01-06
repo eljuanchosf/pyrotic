@@ -15,9 +15,11 @@ func Test_hydrateData(t *testing.T) {
 		data TemplateData
 	}
 	tests := []struct {
-		name string
-		args args
-		want TemplateData
+		name    string
+		args    args
+		want    TemplateData
+		wantErr bool
+		err     error
 	}{
 		{
 			name: "should return inject before",
@@ -29,15 +31,16 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "",
-				Append: false,
-				Inject: true,
-				Before: "// deepak",
-				After:  "",
-				Output: nil,
-				Meta:   map[string]string{},
+				Name: "",
+				To:   "",
+				ParseData: ParseData{
+					Action:        ActionInject,
+					InjectClause:  InjectBefore,
+					InjectMatcher: "// deepak",
+					Meta:          map[string]string{},
+				},
 			},
+			wantErr: false,
 		},
 		{
 			name: "should return inject after",
@@ -49,15 +52,17 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "",
-				Append: false,
-				Inject: true,
-				Before: "",
-				After:  "// deepak",
+				Name: "",
+				To:   "",
+				ParseData: ParseData{
+					Action:        ActionInject,
+					InjectClause:  InjectAfter,
+					InjectMatcher: "// deepak",
+					Meta:          map[string]string{},
+				},
 				Output: nil,
-				Meta:   map[string]string{},
 			},
+			wantErr: false,
 		},
 		{
 			name: "should return append",
@@ -68,17 +73,16 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "",
-				Append: true,
-				Inject: false,
-				Before: "",
+				ParseData: ParseData{
+					Action: ActionAppend,
+					Meta:   map[string]string{},
+				},
 				Output: nil,
-				Meta:   map[string]string{},
 			},
+			wantErr: false,
 		},
 		{
-			name: "should return to ",
+			name: "should return to",
 			args: args{
 				meta: []string{
 					"to: example/screen/foo",
@@ -86,18 +90,18 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "example/screen/foo",
-				Append: false,
-				Inject: false,
-				Before: "",
-				After:  "",
+				Name: "",
+				To:   "example/screen/foo",
+				ParseData: ParseData{
+					Action: ActionCreate,
+					Meta:   map[string]string{},
+				},
 				Output: nil,
-				Meta:   map[string]string{},
 			},
+			wantErr: false,
 		},
 		{
-			name: "should return to ",
+			name: "should return to with meta",
 			args: args{
 				meta: []string{
 					"block: steel",
@@ -105,20 +109,23 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "",
-				Append: false,
-				Inject: false,
-				Before: "",
-				After:  "",
-				Output: nil,
-				Meta: map[string]string{
-					"block": "steel",
+				Name: "",
+				To:   "",
+				ParseData: ParseData{
+					Action:        ActionCreate,
+					InjectClause:  "",
+					InjectMatcher: "",
+					Meta: map[string]string{
+						"block": "steel",
+					},
 				},
+
+				Output: nil,
 			},
+			wantErr: false,
 		},
 		{
-			name: "should return to  and remove white spaces",
+			name: "should return to and remove white spaces",
 			args: args{
 				meta: []string{
 					"  to  : steel  ",
@@ -126,18 +133,18 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "steel",
-				Append: false,
-				Inject: false,
-				Before: "",
-				After:  "",
+				Name: "",
+				To:   "steel",
+				ParseData: ParseData{
+					Action: ActionCreate,
+					Meta:   map[string]string{},
+				},
 				Output: nil,
-				Meta:   map[string]string{},
 			},
+			wantErr: false,
 		},
 		{
-			name: "should skip parse and return default",
+			name: "should return malformed template",
 			args: args{
 				meta: []string{
 					"  to  steel  ",
@@ -145,45 +152,81 @@ func Test_hydrateData(t *testing.T) {
 				data: TemplateData{},
 			},
 			want: TemplateData{
-				Name:   "",
-				To:     "",
-				Append: false,
-				Inject: false,
-				Before: "",
-				After:  "",
+				Name: "",
+				To:   "",
+				ParseData: ParseData{
+					Action:        ActionCreate,
+					InjectClause:  "",
+					InjectMatcher: "",
+				},
 				Output: nil,
-				Meta:   map[string]string{},
 			},
+			wantErr: true,
+			err:     ErrMalformedTemplate,
 		},
 		{
-			name: "should skip parse and return with o",
+			name: "should skip parse and return with error",
 			args: args{
 				meta: []string{
 					"  to  steel  ",
 				},
 				data: TemplateData{
-					Meta: map[string]string{
-						"foo": "bar",
+					ParseData: ParseData{
+						Meta: map[string]string{
+							"foo": "bar",
+						},
 					},
 				},
 			},
 			want: TemplateData{
 				Name:   "",
 				To:     "",
-				Append: false,
-				Inject: false,
-				Before: "",
-				After:  "",
 				Output: nil,
-				Meta: map[string]string{
-					"foo": "bar",
+				ParseData: ParseData{
+					Action: ActionCreate,
+					Meta: map[string]string{
+						"foo": "bar",
+					},
 				},
 			},
+			wantErr: true,
+			err:     ErrMalformedTemplate,
+		},
+		{
+			name: "should return err parsing bool",
+			args: args{
+				meta: []string{
+					"inject: flash gordon",
+				},
+				data: TemplateData{
+					ParseData: ParseData{
+						Meta: map[string]string{
+							"foo": "bar",
+						},
+					},
+				},
+			},
+			want: TemplateData{
+				Name:   "",
+				To:     "",
+				Output: nil,
+				ParseData: ParseData{
+					Action: ActionInject,
+					Meta: map[string]string{
+						"foo": "bar",
+					},
+				},
+			},
+			wantErr: true,
+			err:     ErrParsingBool,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := hydrateData(tt.args.meta, tt.args.data)
+			got, err := hydrateData(tt.args.meta, tt.args.data)
+			if tt.wantErr {
+				assert.Equal(t, tt.err, err)
+			}
 			gotJSON, err := json.Marshal(&got)
 			assert.NoError(t, err)
 			wantJSON, err := json.Marshal(tt.want)
@@ -239,7 +282,7 @@ func Test_extractMeta(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := extractMeta(tt.args.output)
+			got, got1 := extractMetaDataFromTemplate(tt.args.output)
 			if !reflect.DeepEqual(got, tt.meta) {
 				t.Errorf("extractMeta() got = %v, want %v", got, tt.meta)
 			}

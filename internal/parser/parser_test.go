@@ -24,13 +24,67 @@ func Test_withTemplates(t *testing.T) {
 				fileSuffix: "tmpl",
 				dirPath:    "../../example/_templates/fakr",
 			},
-			want:    5,
+			want:    6,
 			wantErr: false,
+		},
+		{
+			name: "should return error if not exists",
+			args: args{
+				fileSuffix: "tmpl",
+				dirPath:    "../../example/_templates/flat",
+			},
+			want:    0,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := withTemplates(tt.args.fileSuffix, tt.args.dirPath)
+			got, err := withTemplates(tt.args.dirPath, tt.args.fileSuffix)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("withTemplates() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			assert.Equal(t, tt.want, len(got))
+			for _, tmp := range got {
+				assert.Greater(t, len(tmp), 0)
+			}
+		})
+	}
+}
+
+func Test_withSharedTemplates(t *testing.T) {
+	type args struct {
+		fileSuffix string
+		dirPath    string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			name: "should return inject_after.tmpl",
+			args: args{
+				fileSuffix: "tmpl",
+				dirPath:    "../../example/_templates/shared",
+			},
+			want:    1,
+			wantErr: false,
+		},
+		{
+			name: "should return inject_after.tmpl",
+			args: args{
+				fileSuffix: "tmpl",
+				dirPath:    "../../example/_templates/fish",
+			},
+			want:    0,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := withSharedTemplates(tt.args.dirPath, tt.args.fileSuffix)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("withTemplates() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -52,7 +106,7 @@ func TestTmplEngine_Parse_should_render(t *testing.T) {
 	expected := TemplateData{
 		Name: "hello",
 	}
-	te := &TmplEngine{
+	te := &TemplateEngine{
 		templates: []string{strTmp},
 		funcs:     defaultFuncs,
 	}
@@ -71,7 +125,7 @@ func TestTmplEngine_Parse_missing_funcs_should_fail_on_meta_parse(t *testing.T) 
 	expected := TemplateData{
 		Name: "hello",
 	}
-	te := &TmplEngine{
+	te := &TemplateEngine{
 		templates: []string{strTmp},
 	}
 	_, err := te.Parse(expected)
@@ -87,7 +141,7 @@ func TestTmplEngine_Parse_missing_funcs_should_fail_on_template_parse(t *testing
 	expected := TemplateData{
 		Name: "hello",
 	}
-	te := &TmplEngine{
+	te := &TemplateEngine{
 		templates: []string{strTmp},
 	}
 	_, err := te.Parse(expected)

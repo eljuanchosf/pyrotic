@@ -26,8 +26,8 @@ func new(cmd *cobra.Command, args []string) {
 		return
 	}
 	generator := args[0]
-	log.Println(chalk.Green("creating new generator"), templatePath)
-	dirPath := path.Join(templatePath, generator, fmt.Sprintf("%s%s", generator, templateSuffix))
+	log.Println(chalk.Green("creating new generator"), flagTemplatePath)
+	dirPath := path.Join(flagTemplatePath, generator, fmt.Sprintf("%s%s", generator, flagTemplateSuffix))
 	if err := os.MkdirAll(filepath.Dir(dirPath), 0750); err != nil {
 		log.Println("error creating", err)
 		return

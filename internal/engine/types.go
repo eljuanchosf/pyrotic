@@ -6,7 +6,7 @@ import (
 )
 
 type Core struct {
-	parser parser.TmplEngine
+	parser parser.TemplateEngine
 	fwr    writer.Write
 }
 

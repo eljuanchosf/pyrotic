@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+
+	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 )
 
 const (
@@ -28,14 +30,14 @@ const (
 // stage 1: hydrate the data from the metadata within the "---" block of the template
 //
 // stage 2: parse and execute the template with the hydrated metadata
-func parse(raw string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
-	meta, stringOutput := extractMeta(raw)
+func parse(raw string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) (TemplateData, error) {
+	meta, stringOutput := extractMetaDataFromTemplate(raw)
 
-	hydratedData, err := generateMetaData(meta, data, funcs)
+	hydratedData, err := generateParseData(meta, data, funcs)
 	if err != nil {
 		return hydratedData, err
 	}
-	output, err := generateTemplate(string(stringOutput), hydratedData, funcs)
+	output, err := generateTemplate(string(stringOutput), hydratedData, funcs, sharedTmpl)
 	if err != nil {
 		return hydratedData, err
 	}
@@ -43,7 +45,7 @@ func parse(raw string, data TemplateData, funcs template.FuncMap) (TemplateData,
 	return hydratedData, nil
 }
 
-func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
+func generateParseData(meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
 	parsedMeta := []string{}
 
 	for _, item := range meta {
@@ -51,78 +53,86 @@ func generateMetaData(meta []string, data TemplateData, funcs template.FuncMap) 
 		wr := bufio.NewWriter(&buf)
 		t, err := template.New("meta").Funcs(funcs).Parse(item)
 		if err != nil {
-			log.Println("error generating metadata ", err)
+			log.Printf(chalk.Red("error generating metadata %s"), err)
 			return data, err
 		}
 
 		if err := t.Execute(wr, data); err != nil {
-			log.Println("error executing template ", err)
+			log.Printf(chalk.Red("error executing template %s"), err)
 			return data, err
 		}
 
 		if err := wr.Flush(); err != nil {
-			log.Println("error flushing writer ", err)
+			log.Printf(chalk.Red("error flushing writer %s"), err)
 			return data, err
 		}
 
 		parsedMeta = append(parsedMeta, buf.String())
 	}
-	return hydrateData(parsedMeta, data), nil
+
+	return hydrateData(parsedMeta, data)
+
 }
 
-func generateTemplate(output string, data TemplateData, funcs template.FuncMap) ([]byte, error) {
-	tmpl, err := template.New("root").Funcs(funcs).Parse(output)
+func generateTemplate(tmplOutput string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) ([]byte, error) {
+	tmpl, err := template.New("flam").Funcs(funcs).Parse(tmplOutput)
 	if err != nil {
-		log.Println("error parsing output ", err)
+		log.Printf(chalk.Red("error parsing output: %s"), err)
 		return nil, err
+	}
+
+	for tmplName, tmplOutput := range sharedTmpl {
+		tmpl.New(tmplName).Funcs(funcs).Parse(tmplOutput)
 	}
 
 	var buf bytes.Buffer
 	wr := bufio.NewWriter(&buf)
 	if err := tmpl.Execute(wr, data); err != nil {
-		log.Println("error executing template ", err)
+		log.Printf(chalk.Red("error executing template: %s"), err)
 		return nil, err
 	}
 	if err := wr.Flush(); err != nil {
-		log.Println("error flushing writer ", err)
+		log.Printf(chalk.Red("error flushing writer: %s"), err)
 		return buf.Bytes(), err
 	}
 	return buf.Bytes(), nil
 }
 
-func hydrateData(meta []string, data TemplateData) TemplateData {
+func hydrateData(meta []string, data TemplateData) (TemplateData, error) {
 	result := TemplateData{
-		Name: data.Name,
+		Name:      data.Name,
+		ParseData: data.ParseData,
 	}
+	result.ParseData.Action = ActionCreate
+
 	tmp := map[string]string{}
 	for _, item := range meta {
 		tokens := strings.Split(strings.TrimSpace(item), tokenColon)
 		if len(tokens) != 2 {
-			log.Println("malformed template data for ", data.Name)
-			continue
+			return result, ErrMalformedTemplate
 		}
 
 		switch strings.TrimSpace(tokens[0]) {
 		case fieldTo:
 			result.To = strings.TrimSpace(tokens[1])
 		case fieldAfter:
-			result.After = strings.TrimSpace(tokens[1])
+			result.ParseData.InjectClause = InjectAfter
+			result.ParseData.InjectMatcher = strings.TrimSpace(tokens[1])
 		case fieldBefore:
-			result.Before = strings.TrimSpace(tokens[1])
+			result.ParseData.InjectClause = InjectBefore
+			result.ParseData.InjectMatcher = strings.TrimSpace(tokens[1])
 		case fieldAppend:
+			result.ParseData.Action = ActionAppend
 			stringAppend := strings.TrimSpace(tokens[1])
-			append, err := strconv.ParseBool(stringAppend)
-			if err != nil {
-				log.Println("error parsing bool", err)
+			if _, err := strconv.ParseBool(stringAppend); err != nil {
+				return result, ErrParsingBool
 			}
-			result.Append = append
 		case fieldInject:
+			result.ParseData.Action = ActionInject
 			stringAppend := strings.TrimSpace(tokens[1])
-			inject, err := strconv.ParseBool(stringAppend)
-			if err != nil {
-				log.Println("error parsing bool", err)
+			if _, err := strconv.ParseBool(stringAppend); err != nil {
+				return result, ErrParsingBool
 			}
-			result.Inject = inject
 		default:
 			key := strings.TrimSpace(tokens[0])
 			tmp[key] = strings.TrimSpace(tokens[1])
@@ -136,10 +146,10 @@ func hydrateData(meta []string, data TemplateData) TemplateData {
 	}
 
 	result.Meta = tmp
-	return result
+	return result, nil
 }
 
-func extractMeta(template string) ([]string, string) {
+func extractMetaDataFromTemplate(template string) ([]string, string) {
 	rawOut := strings.Split(template, tokenNewLine)
 	meta := []string{}
 	output := []string{}
