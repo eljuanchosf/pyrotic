@@ -43,25 +43,6 @@ func Test_hydrateData(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "should return template",
-			args: args{
-				meta: []string{
-					"template: foo/bar",
-					"append: true",
-				},
-				data: TemplateData{},
-			},
-			want: TemplateData{
-				Name: "",
-				To:   "",
-				ParseData: ParseData{
-					Action: ActionAppend,
-					Meta:   map[string]string{},
-				},
-			},
-			wantErr: false,
-		},
-		{
 			name: "should return inject after",
 			args: args{
 				meta: []string{
