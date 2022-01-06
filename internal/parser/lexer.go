@@ -76,20 +76,16 @@ func generateParseData(meta []string, data TemplateData, funcs template.FuncMap)
 }
 
 func generateTemplate(tmplOutput string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) ([]byte, error) {
-	var tmpl *template.Template
-	var err error
+	tmpl, err := template.New("flam").Funcs(funcs).Parse(tmplOutput)
+	if err != nil {
+		log.Printf(chalk.Red("error parsing output: %s"), err)
+		return nil, err
+	}
 
 	if data.SharedTemplate != "" {
 		if partialOutput, ok := sharedTmpl[data.SharedTemplate]; ok {
 			tmpl.New(data.SharedTemplate).Funcs(funcs).Parse(partialOutput)
-			return []byte(tmplOutput), err
 		}
-	}
-
-	tmpl, err = template.New("root").Funcs(funcs).Parse(tmplOutput)
-	if err != nil {
-		log.Printf(chalk.Red("error parsing output: %s"), err)
-		return nil, err
 	}
 
 	var buf bytes.Buffer
