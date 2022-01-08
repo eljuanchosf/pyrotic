@@ -63,7 +63,6 @@ func (te *TemplateEngine) Parse(data TemplateData) ([]TemplateData, error) {
 	for name, tmpl := range te.templates {
 		newData, err := parse(name, tmpl, data, te.funcs, te.sharedTemplates)
 		if err != nil {
-			log.Printf(chalk.Red("error parsing template: %s"), err)
 			return result, err
 		}
 

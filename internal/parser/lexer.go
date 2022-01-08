@@ -89,7 +89,7 @@ func generateTemplate(tmplName, tmplOutput string, data TemplateData, funcs temp
 	var buf bytes.Buffer
 	wr := bufio.NewWriter(&buf)
 	if err := tmpl.Execute(wr, data); err != nil {
-		log.Printf(chalk.Red("error executing template: %s"), err)
+		log.Println(chalk.Red(err.Error()), "\n", tmplOutput)
 		return nil, err
 	}
 	if err := wr.Flush(); err != nil {
