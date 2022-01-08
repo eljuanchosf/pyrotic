@@ -3,6 +3,7 @@ package parser
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -35,6 +36,7 @@ func parse(tmplName, tmpl string, data TemplateData, funcs template.FuncMap, sha
 
 	hydratedData, err := generateParseData(meta, data, funcs)
 	if err != nil {
+		log.Println(chalk.Red("error parsing metadata"), err)
 		return hydratedData, err
 	}
 	output, err := generateTemplate(tmplName, string(stringOutput), hydratedData, funcs, sharedTmpl)
@@ -110,7 +112,7 @@ func hydrateData(meta []string, data TemplateData) (TemplateData, error) {
 	for _, item := range meta {
 		tokens := strings.Split(strings.TrimSpace(item), tokenColon)
 		if len(tokens) != 2 {
-			return result, ErrMalformedTemplate
+			return result, fmt.Errorf("%w: %s", ErrMalformedTemplate, item)
 		}
 
 		switch strings.TrimSpace(tokens[0]) {
