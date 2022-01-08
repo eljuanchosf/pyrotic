@@ -69,7 +69,9 @@ func (c *Core) Generate(data Data) error {
 
 func generateMeta(meta string) map[string]string {
 	result := map[string]string{}
-
+	if len(meta) == 0 {
+		return result
+	}
 	list := strings.Split(meta, metaDelimiter)
 	for _, keyVal := range list {
 		rawMeta := strings.Split(keyVal, strings.TrimSpace(metaKeyValueDelimiter))
