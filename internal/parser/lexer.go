@@ -30,14 +30,14 @@ const (
 // stage 1: hydrate the data from the metadata within the "---" block of the template
 //
 // stage 2: parse and execute the template with the hydrated metadata
-func parse(raw string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) (TemplateData, error) {
-	meta, stringOutput := extractMetaDataFromTemplate(raw)
+func parse(tmplName, tmpl string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) (TemplateData, error) {
+	meta, stringOutput := extractMetaDataFromTemplate(tmpl)
 
 	hydratedData, err := generateParseData(meta, data, funcs)
 	if err != nil {
 		return hydratedData, err
 	}
-	output, err := generateTemplate(string(stringOutput), hydratedData, funcs, sharedTmpl)
+	output, err := generateTemplate(tmplName, string(stringOutput), hydratedData, funcs, sharedTmpl)
 	if err != nil {
 		return hydratedData, err
 	}
@@ -74,16 +74,16 @@ func generateParseData(meta []string, data TemplateData, funcs template.FuncMap)
 
 }
 
-func generateTemplate(tmplOutput string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) ([]byte, error) {
-	tmpl, err := template.New(data.Name).Funcs(funcs).Parse(tmplOutput)
+func generateTemplate(tmplName, tmplOutput string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) ([]byte, error) {
+	tmpl, err := template.New(tmplName).Funcs(funcs).Parse(tmplOutput)
 	if err != nil {
 		log.Printf(chalk.Red("error parsing output: %s"), err)
 		return nil, err
 	}
 
-	for tmplName, tmplOutput := range sharedTmpl {
+	for sharedTmplName, tmplOutput := range sharedTmpl {
 		// we don't mind if this fails
-		tmpl.New(tmplName).Funcs(funcs).Parse(tmplOutput)
+		tmpl.New(sharedTmplName).Funcs(funcs).Parse(tmplOutput)
 	}
 
 	var buf bytes.Buffer

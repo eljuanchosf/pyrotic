@@ -3,7 +3,7 @@ package parser
 import "text/template"
 
 type TemplateEngine struct {
-	templates       []string
+	templates       map[string]string
 	sharedTemplates map[string]string
 	funcs           template.FuncMap
 }

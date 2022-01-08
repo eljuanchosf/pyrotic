@@ -52,51 +52,6 @@ func Test_withTemplates(t *testing.T) {
 	}
 }
 
-func Test_withSharedTemplates(t *testing.T) {
-	type args struct {
-		fileSuffix string
-		dirPath    string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    int
-		wantErr bool
-	}{
-		{
-			name: "should return inject_after.tmpl",
-			args: args{
-				fileSuffix: "tmpl",
-				dirPath:    "../../example/_templates/shared",
-			},
-			want:    1,
-			wantErr: false,
-		},
-		{
-			name: "should return inject_after.tmpl",
-			args: args{
-				fileSuffix: "tmpl",
-				dirPath:    "../../example/_templates/fish",
-			},
-			want:    0,
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := withSharedTemplates(tt.args.dirPath, tt.args.fileSuffix)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("withTemplates() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			assert.Equal(t, tt.want, len(got))
-			for _, tmp := range got {
-				assert.Greater(t, len(tmp), 0)
-			}
-		})
-	}
-}
-
 func TestTmplEngine_Parse_should_render(t *testing.T) {
 	strTmp := `---
 	to: elo
@@ -107,7 +62,7 @@ func TestTmplEngine_Parse_should_render(t *testing.T) {
 		Name: "hello",
 	}
 	te := &TemplateEngine{
-		templates: []string{strTmp},
+		templates: map[string]string{"tmp": strTmp},
 		funcs:     defaultFuncs,
 	}
 	data, err := te.Parse(expected)
@@ -126,7 +81,7 @@ func TestTmplEngine_Parse_missing_funcs_should_fail_on_meta_parse(t *testing.T) 
 		Name: "hello",
 	}
 	te := &TemplateEngine{
-		templates: []string{strTmp},
+		templates: map[string]string{"tmp": strTmp},
 	}
 	_, err := te.Parse(expected)
 	assert.Error(t, err)
@@ -142,7 +97,7 @@ func TestTmplEngine_Parse_missing_funcs_should_fail_on_template_parse(t *testing
 		Name: "hello",
 	}
 	te := &TemplateEngine{
-		templates: []string{strTmp},
+		templates: map[string]string{"tmp": strTmp},
 	}
 	_, err := te.Parse(expected)
 	assert.Error(t, err)
