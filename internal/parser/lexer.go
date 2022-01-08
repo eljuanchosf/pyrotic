@@ -58,7 +58,7 @@ func generateParseData(meta []string, data TemplateData, funcs template.FuncMap)
 		}
 
 		if err := t.Execute(wr, data); err != nil {
-			log.Printf(chalk.Red("error executing template %s"), err)
+			log.Printf(chalk.Red(err.Error()), "\n", item)
 			return data, err
 		}
 
