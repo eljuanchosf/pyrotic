@@ -16,7 +16,7 @@ func (f *fileWrite) WriteFile(name string, data []byte, perm os.FileMode) error 
 	return os.WriteFile(name, data, perm)
 }
 func (f *fileWrite) ReadFile(name string) ([]byte, error) {
-	return os.ReadFile(name)
+	return os.ReadFile(filepath.Clean(name))
 }
 
 func (f *fileWrite) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
