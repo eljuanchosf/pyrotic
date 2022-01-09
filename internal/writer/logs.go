@@ -19,6 +19,7 @@ func (f *fileLog) ReadFile(name string) ([]byte, error) {
 }
 
 func (f *fileLog) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
+	// #nosec G304
 	return os.OpenFile(filepath.Clean(name), flag, perm)
 }
 
