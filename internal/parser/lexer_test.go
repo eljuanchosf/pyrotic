@@ -225,7 +225,7 @@ func Test_hydrateData(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := hydrateData(tt.args.meta, tt.args.data)
 			if tt.wantErr {
-				assert.Equal(t, tt.err, err)
+				assert.ErrorIs(t, err, tt.err)
 			}
 			gotJSON, err := json.Marshal(&got)
 			assert.NoError(t, err)

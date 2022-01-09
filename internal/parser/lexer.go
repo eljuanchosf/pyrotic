@@ -3,6 +3,7 @@ package parser
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -30,40 +31,39 @@ const (
 // stage 1: hydrate the data from the metadata within the "---" block of the template
 //
 // stage 2: parse and execute the template with the hydrated metadata
-func parse(raw string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) (TemplateData, error) {
-	meta, stringOutput := extractMetaDataFromTemplate(raw)
+func parse(tmplName, tmpl string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) (TemplateData, error) {
+	meta, stringOutput := extractMetaDataFromTemplate(tmpl)
 
-	hydratedData, err := generateParseData(meta, data, funcs)
+	hydratedData, err := generateParseData(tmplName, meta, data, funcs)
 	if err != nil {
+		log.Println(chalk.Red("error parsing metadata"), err)
 		return hydratedData, err
 	}
-	output, err := generateTemplate(string(stringOutput), hydratedData, funcs, sharedTmpl)
+	output, err := generateTemplate(tmplName, string(stringOutput), hydratedData, funcs, sharedTmpl)
 	if err != nil {
+		log.Println(chalk.Red("error generating template"), err)
 		return hydratedData, err
 	}
 	hydratedData.Output = output
 	return hydratedData, nil
 }
 
-func generateParseData(meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
+func generateParseData(tmplName string, meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
 	parsedMeta := []string{}
 
 	for _, item := range meta {
 		var buf bytes.Buffer
 		wr := bufio.NewWriter(&buf)
-		t, err := template.New("meta").Funcs(funcs).Parse(item)
+		t, err := template.New(tmplName).Funcs(funcs).Parse(item)
 		if err != nil {
-			log.Printf(chalk.Red("error generating metadata %s"), err)
 			return data, err
 		}
 
 		if err := t.Execute(wr, data); err != nil {
-			log.Printf(chalk.Red("error executing template %s"), err)
-			return data, err
+			return data, fmt.Errorf("%w: %s", err, item)
 		}
 
 		if err := wr.Flush(); err != nil {
-			log.Printf(chalk.Red("error flushing writer %s"), err)
 			return data, err
 		}
 
@@ -74,23 +74,22 @@ func generateParseData(meta []string, data TemplateData, funcs template.FuncMap)
 
 }
 
-func generateTemplate(tmplOutput string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) ([]byte, error) {
-	tmpl, err := template.New(data.Name).Funcs(funcs).Parse(tmplOutput)
+func generateTemplate(tmplName, tmplOutput string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) ([]byte, error) {
+	tmpl, err := template.New(tmplName).Funcs(funcs).Parse(tmplOutput)
 	if err != nil {
 		log.Printf(chalk.Red("error parsing output: %s"), err)
 		return nil, err
 	}
 
-	for tmplName, tmplOutput := range sharedTmpl {
+	for sharedTmplName, sharedTmpl := range sharedTmpl {
 		// we don't mind if this fails
-		tmpl.New(tmplName).Funcs(funcs).Parse(tmplOutput)
+		tmpl.New(sharedTmplName).Funcs(funcs).Parse(sharedTmpl)
 	}
 
 	var buf bytes.Buffer
 	wr := bufio.NewWriter(&buf)
 	if err := tmpl.Execute(wr, data); err != nil {
-		log.Printf(chalk.Red("error executing template: %s"), err)
-		return nil, err
+		return nil, fmt.Errorf("%w \n %s", err, tmplOutput)
 	}
 	if err := wr.Flush(); err != nil {
 		log.Printf(chalk.Red("error flushing writer: %s"), err)
@@ -110,7 +109,7 @@ func hydrateData(meta []string, data TemplateData) (TemplateData, error) {
 	for _, item := range meta {
 		tokens := strings.Split(strings.TrimSpace(item), tokenColon)
 		if len(tokens) != 2 {
-			return result, ErrMalformedTemplate
+			return result, fmt.Errorf("%w : %s", ErrMalformedTemplate, item)
 		}
 
 		switch strings.TrimSpace(tokens[0]) {
