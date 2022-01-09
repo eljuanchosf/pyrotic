@@ -83,9 +83,9 @@ func generateTemplate(tmplName, tmplOutput string, data TemplateData, funcs temp
 		return nil, err
 	}
 
-	for sharedTmplName, tmplOutput := range sharedTmpl {
+	for sharedTmplName, sharedTmpl := range sharedTmpl {
 		// we don't mind if this fails
-		tmpl.New(sharedTmplName).Funcs(funcs).Parse(tmplOutput)
+		tmpl.New(sharedTmplName).Funcs(funcs).Parse(sharedTmpl)
 	}
 
 	var buf bytes.Buffer
