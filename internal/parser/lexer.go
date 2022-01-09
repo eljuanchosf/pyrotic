@@ -41,6 +41,7 @@ func parse(tmplName, tmpl string, data TemplateData, funcs template.FuncMap, sha
 	}
 	output, err := generateTemplate(tmplName, string(stringOutput), hydratedData, funcs, sharedTmpl)
 	if err != nil {
+		log.Println(chalk.Red("error generating template"), err)
 		return hydratedData, err
 	}
 	hydratedData.Output = output
@@ -88,8 +89,7 @@ func generateTemplate(tmplName, tmplOutput string, data TemplateData, funcs temp
 	var buf bytes.Buffer
 	wr := bufio.NewWriter(&buf)
 	if err := tmpl.Execute(wr, data); err != nil {
-		log.Println(chalk.Red(err.Error()), "\n", tmplOutput)
-		return nil, err
+		return nil, fmt.Errorf("%w \n %s", err, tmplOutput)
 	}
 	if err := wr.Flush(); err != nil {
 		log.Printf(chalk.Red("error flushing writer: %s"), err)
