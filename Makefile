@@ -16,6 +16,9 @@ CMD_NAME ?= newCommand
 test: ## Run unit tests
 	go test --short -cover -failfast ./...
 
+test_integration: build ## run integration test
+	ENV=DEV ./pyrotic -p example/_templates generate fakr --meta foo=bar,bin=baz
+
 scan: ## run scan
 	gosec ./...
 
