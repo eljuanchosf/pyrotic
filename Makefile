@@ -19,10 +19,10 @@ test: ## Run unit tests
 test_integration: build ## run integration test
 	ENV=DEV ./pyrotic -p example/_templates generate fakr --meta foo=bar,bin=baz
 
-scan: ## run scan
+scan: ## run security scan
 	gosec ./...
 
-build: log
+build: log scan ## build go files
 	go build $(GO_BUILD_FLAGS) -o $(APP_NAME)
 
 generate_cmd: build ## gernate new command

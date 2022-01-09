@@ -89,7 +89,7 @@ func withTemplates(dirPath string, fileSuffix string) (map[string]string, error)
 		fileLocation := filepath.Join(dirPath, file.Name())
 		if strings.HasSuffix(file.Name(), fileSuffix) {
 			log.Println(chalk.Green("loading template: "), fileLocation)
-			data, err := os.ReadFile(fileLocation)
+			data, err := os.ReadFile(filepath.Clean(fileLocation))
 			if err != nil {
 				log.Printf(chalk.Red("error reading file %s"), fileLocation)
 				return rootTemplates, err
