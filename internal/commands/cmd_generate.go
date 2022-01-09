@@ -13,15 +13,14 @@ import (
 
 func generateCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "generate",
-		Short: "generate template",
-		Long:  "generate tempate by argument",
+		Use:   "generate <generator-name> --name <file-name>",
+		Short: "Generate template",
+		Long:  `Generate tempate by generator name. `,
 		Run:   generateFunc(),
 	}
 }
 
 func generateFunc() cmdFunc {
-
 	return func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			log.Println("at least 1 generator must be provided")

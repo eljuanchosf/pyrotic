@@ -9,8 +9,8 @@ import (
 func versionCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
-		Short: "a new command",
-		Long:  "a new command",
+		Short: "App version",
+		Long:  "App version",
 		Run:   versionFunc,
 	}
 }
