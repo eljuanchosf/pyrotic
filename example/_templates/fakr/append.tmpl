@@ -1,6 +1,7 @@
 ---
 to: example/fakr/{{ .Name }}.go
 append: true
+after: {{ .Meta.satan }}
 ---
 
 func appended(name string) error {
