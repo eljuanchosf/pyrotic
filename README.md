@@ -68,7 +68,7 @@ default shared templates path is `_templates/shared`
 
 ```
 pyrotic --shared foo/bar generate cmd --name setup
-pyrotic --s foo/bar generate cmd --name setup
+pyrotic -s foo/bar generate cmd --name setup
 ```
 
 ## Formatter properties
