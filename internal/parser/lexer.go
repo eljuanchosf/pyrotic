@@ -55,17 +55,14 @@ func generateParseData(tmplName string, meta []string, data TemplateData, funcs 
 		wr := bufio.NewWriter(&buf)
 		t, err := template.New(tmplName).Funcs(funcs).Parse(item)
 		if err != nil {
-			log.Printf(chalk.Red("error generating metadata %s"), err)
 			return data, err
 		}
 
 		if err := t.Execute(wr, data); err != nil {
-			log.Printf(chalk.Red(err.Error()), "\n", item)
-			return data, err
+			return data, fmt.Errorf("%w: %s", err, item)
 		}
 
 		if err := wr.Flush(); err != nil {
-			log.Printf(chalk.Red("error flushing writer %s"), err)
 			return data, err
 		}
 
