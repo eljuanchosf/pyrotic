@@ -16,11 +16,11 @@ func generateCmd() *cobra.Command {
 		Use:   "generate",
 		Short: "generate template",
 		Long:  "generate tempate by argument",
-		Run:   generate(),
+		Run:   generateFunc(),
 	}
 }
 
-func generate() cmdFunc {
+func generateFunc() cmdFunc {
 
 	return func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
