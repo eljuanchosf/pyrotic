@@ -112,7 +112,7 @@ func hydrateData(meta []string, data TemplateData) (TemplateData, error) {
 	for _, item := range meta {
 		tokens := strings.Split(strings.TrimSpace(item), tokenColon)
 		if len(tokens) != 2 {
-			return result, fmt.Errorf("%w: %s", ErrMalformedTemplate, item)
+			return result, fmt.Errorf("%w : %s", ErrMalformedTemplate, item)
 		}
 
 		switch strings.TrimSpace(tokens[0]) {
