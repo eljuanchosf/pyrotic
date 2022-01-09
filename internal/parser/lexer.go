@@ -54,13 +54,13 @@ func generateParseData(tmplName string, meta []string, data TemplateData, funcs 
 	for _, item := range meta {
 		var buf bytes.Buffer
 		wr := bufio.NewWriter(&buf)
-		t, err := template.New(tmplName).Funcs(funcs).Parse(item)
+		t, err := template.New(tmplName).Option("missingkey=error").Funcs(funcs).Parse(item)
 		if err != nil {
 			return data, err
 		}
 
 		if err := t.Execute(wr, data); err != nil {
-			return data, fmt.Errorf("%w: %s", err, item)
+			return data, fmt.Errorf("%w \n %s", err, item)
 		}
 
 		if err := wr.Flush(); err != nil {
@@ -75,7 +75,7 @@ func generateParseData(tmplName string, meta []string, data TemplateData, funcs 
 }
 
 func generateTemplate(tmplName, tmplOutput string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) ([]byte, error) {
-	tmpl, err := template.New(tmplName).Funcs(funcs).Parse(tmplOutput)
+	tmpl, err := template.New(tmplName).Option("missingkey=error").Funcs(funcs).Parse(tmplOutput)
 	if err != nil {
 		log.Printf(chalk.Red("error parsing output: %s"), err)
 		return nil, err
