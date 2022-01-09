@@ -15,14 +15,14 @@ func {{.Name | caseCamel }}Cmd() *cobra.Command {
 		Use:   "{{ .Name | caseLower }}",
 		Short: "a new command",
 		Long:  "a new command",
-		Run:   {{ .Name | caseCamel }},
+		RunE:   {{ .Name | caseCamel }},
 	}
 }
 
-func {{ .Name | caseCamel }}(cmd *cobra.Command, args []string) {
+func {{ .Name | caseCamel }}Func() cmdErrFunc {
 
 	if len(args) == 0 {
-		log.Println("at least 1 argument name must be provided")
+		log.Println("at least 1 argument must be provided")
 		return
 	}
 }
