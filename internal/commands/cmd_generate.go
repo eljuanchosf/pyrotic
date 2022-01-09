@@ -16,16 +16,16 @@ func generateCmd() *cobra.Command {
 		Use:   "generate",
 		Short: "generate template",
 		Long:  "generate tempate by argument",
-		RunE:  generate(),
+		Run:   generate(),
 	}
 }
 
-func generate() cmdErrFunc {
+func generate() cmdFunc {
 
-	return func(cmd *cobra.Command, args []string) error {
+	return func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			log.Println("at least 1 generator must be provided")
-			return ErrNoArguments
+			return
 		}
 
 		generatorName := args[0]
@@ -33,7 +33,7 @@ func generate() cmdErrFunc {
 		_, err := os.ReadDir(dirPath)
 		if err != nil {
 			log.Println("generator not found:", generatorName)
-			return ErrGeneratorNotFound
+			return
 		}
 
 		sharedPath := filepath.Join(flagTemplatePath, flagSharedFolder)
@@ -42,15 +42,14 @@ func generate() cmdErrFunc {
 		e, err := engine.New(flagDryrun, dirPath, sharedPath, flagTemplateSuffix)
 		if err != nil {
 			log.Println("error creating engine ", err)
-			return Err
+			return
 		}
 
 		startTime := time.Now()
 		err = e.Generate(engine.Data{Name: flagGeneratorName, MetaArgs: flagMetaArgs})
 		if err != nil {
-			return Err
+			return
 		}
 		log.Println(chalk.Green("generated in "), time.Since(startTime))
-		return nil
 	}
 }
