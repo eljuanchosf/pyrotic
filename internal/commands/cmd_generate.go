@@ -16,38 +16,41 @@ func generateCmd() *cobra.Command {
 		Use:   "generate",
 		Short: "generate template",
 		Long:  "generate tempate by argument",
-		Run:   generate,
+		RunE:  generate(),
 	}
 }
 
-func generate(cmd *cobra.Command, args []string) {
+func generate() cmdErrFunc {
 
-	if len(args) == 0 {
-		log.Println("at least 1 generator name must be provided")
-		return
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			log.Println("at least 1 generator must be provided")
+			return ErrNoArguments
+		}
+
+		generatorName := args[0]
+		dirPath := filepath.Join(flagTemplatePath, generatorName)
+		_, err := os.ReadDir(dirPath)
+		if err != nil {
+			log.Println("generator not found:", generatorName)
+			return ErrGeneratorNotFound
+		}
+
+		sharedPath := filepath.Join(flagTemplatePath, flagSharedFolder)
+
+		log.Println(chalk.Green("running generator:"), generatorName)
+		e, err := engine.New(flagDryrun, dirPath, sharedPath, flagTemplateSuffix)
+		if err != nil {
+			log.Println("error creating engine ", err)
+			return Err
+		}
+
+		startTime := time.Now()
+		err = e.Generate(engine.Data{Name: flagGeneratorName, MetaArgs: flagMetaArgs})
+		if err != nil {
+			return Err
+		}
+		log.Println(chalk.Green("generated in "), time.Since(startTime))
+		return nil
 	}
-
-	generator := args[0]
-	dirPath := filepath.Join(flagTemplatePath, generator)
-	_, err := os.ReadDir(dirPath)
-	if err != nil {
-		log.Println("generator not found:", generator)
-		return
-	}
-
-	sharedPath := filepath.Join(flagTemplatePath, flagSharedFolder)
-
-	log.Println(chalk.Green("running generator:"), generator)
-	e, err := engine.New(flagDryrun, dirPath, sharedPath, flagTemplateSuffix)
-	if err != nil {
-		log.Println("error creating engine ", err)
-		return
-	}
-
-	startTime := time.Now()
-	err = e.Generate(engine.Data{Name: flagGeneratorName, MetaArgs: flagMetaArgs})
-	if err != nil {
-		return
-	}
-	log.Println(chalk.Green("generated in "), time.Since(startTime))
 }
