@@ -15,7 +15,7 @@ func (f *fileLog) WriteFile(name string, data []byte, perm os.FileMode) error {
 	return nil
 }
 func (f *fileLog) ReadFile(name string) ([]byte, error) {
-	return os.ReadFile(name)
+	return os.ReadFile(filepath.Base(name))
 }
 
 func (f *fileLog) OpenFile(name string, flag int, perm fs.FileMode) (*os.File, error) {
