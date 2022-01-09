@@ -22,5 +22,10 @@ jobs:
         with:
           go-version: ${{ matrix.goVer }} # The Go version to download (if necessary) and use.
 
+      - name: Run gosec Security Scanner
+        uses: securego/gosec@master
+        with:
+          args: ./...          
+
       - name: test
         run: make test
