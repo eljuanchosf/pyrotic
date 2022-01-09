@@ -116,7 +116,7 @@ you can pass in meta data via the `--meta` or `-m` flag, which takes in a comma 
 ```
 
 pyrotic generate fakr --meta foo=bar,bin=baz
-pyrotic generate fakr --m foo=bar,bin=baz
+pyrotic generate fakr -m foo=bar,bin=baz
 
 ```
 
