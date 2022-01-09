@@ -27,9 +27,9 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&flagTemplatePath, "path", "p", "_templates", "Templates directory path, defaults to _templates at the root of the project.")
 	rootCmd.PersistentFlags().StringVarP(&flagTemplateSuffix, "extension", "x", ".tmpl", "Template file extension, defaults to .tmpl")
-	rootCmd.PersistentFlags().StringVarP(&flagMetaArgs, "meta", "m", "", "Pass meta arguments to template. Meta arguments passed via command line will overwrite emplate args. Use a comma delimiter to provide multiple arguments, eg: --meta foo=bar,bin=baz")
+	rootCmd.PersistentFlags().StringVarP(&flagMetaArgs, "meta", "m", "", "Pass meta arguments to template. Meta arguments passed via command line will overwrite template args. Use a comma delimiter to provide multiple arguments, eg: --meta foo=bar,bin=baz")
 	rootCmd.PersistentFlags().StringVarP(&flagSharedFolder, "shared", "s", "Shared", "shared template folder name, defaults to shared eg: shared")
-	rootCmd.PersistentFlags().BoolVarP(&flagDryrun, "dry-run", "d", false, "Run the generator in dry run mode")
+	rootCmd.PersistentFlags().BoolVarP(&flagDryrun, "dry-run", "d", false, "Instead of writing to file, log the output to stdout")
 }
 
 func Execute() error {
