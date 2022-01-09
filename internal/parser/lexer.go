@@ -34,7 +34,7 @@ const (
 func parse(tmplName, tmpl string, data TemplateData, funcs template.FuncMap, sharedTmpl map[string]string) (TemplateData, error) {
 	meta, stringOutput := extractMetaDataFromTemplate(tmpl)
 
-	hydratedData, err := generateParseData(meta, data, funcs)
+	hydratedData, err := generateParseData(tmplName, meta, data, funcs)
 	if err != nil {
 		log.Println(chalk.Red("error parsing metadata"), err)
 		return hydratedData, err
@@ -47,13 +47,13 @@ func parse(tmplName, tmpl string, data TemplateData, funcs template.FuncMap, sha
 	return hydratedData, nil
 }
 
-func generateParseData(meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
+func generateParseData(tmplName string, meta []string, data TemplateData, funcs template.FuncMap) (TemplateData, error) {
 	parsedMeta := []string{}
 
 	for _, item := range meta {
 		var buf bytes.Buffer
 		wr := bufio.NewWriter(&buf)
-		t, err := template.New("meta").Funcs(funcs).Parse(item)
+		t, err := template.New(tmplName).Funcs(funcs).Parse(item)
 		if err != nil {
 			log.Printf(chalk.Red("error generating metadata %s"), err)
 			return data, err
