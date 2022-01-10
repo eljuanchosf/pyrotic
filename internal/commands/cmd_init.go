@@ -14,8 +14,8 @@ import (
 func initCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "init",
-		Short: "init pyrotic",
-		Long:  "creates required setup for pyrotic",
+		Short: "Init pyrotic",
+		Long:  "Creates required setup for pyrotic",
 		Run:   initFunc,
 	}
 }

@@ -11,7 +11,7 @@ This project is for people who want to use a code generator and not have to inst
 ## Install
 
 ```
-go install github.com/code-gorilla-au/pyrotic
+go install github.com/code-gorilla-au/pyrotic@latest
 
 ```
 
@@ -68,7 +68,7 @@ default shared templates path is `_templates/shared`
 
 ```
 pyrotic --shared foo/bar generate cmd --name setup
-pyrotic --s foo/bar generate cmd --name setup
+pyrotic -s foo/bar generate cmd --name setup
 ```
 
 ## Formatter properties

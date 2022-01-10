@@ -20,3 +20,12 @@ func Test_generateMeta_should_should_meta_map(t *testing.T) {
 		"bin": "baz",
 	}, got)
 }
+
+func Test_generateMeta_should_should_meta_map_with_no_spaces(t *testing.T) {
+
+	got := generateMeta("foo = bar , bin = baz")
+	assert.Equal(t, map[string]string{
+		"foo": "bar",
+		"bin": "baz",
+	}, got)
+}

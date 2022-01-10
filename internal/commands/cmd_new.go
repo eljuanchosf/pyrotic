@@ -13,9 +13,9 @@ import (
 
 func newCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "new",
-		Short: "create generator",
-		Long:  "create a new generator",
+		Use:   "new <generator-name>",
+		Short: "Create generator",
+		Long:  "Create a new generator",
 		Run:   new,
 	}
 }
