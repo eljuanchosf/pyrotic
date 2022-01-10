@@ -25,6 +25,9 @@ scan: ## run security scan
 build: log scan ## build go files
 	go build $(GO_BUILD_FLAGS) -o $(APP_NAME)
 
+code_gen: ## generate code
+	go generate
+
 generate_cmd: build ## gernate new command
 	./$(APP_NAME) generate cmd --name $(CMD_NAME)
 
