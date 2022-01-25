@@ -1,0 +1,16 @@
+---
+to: example/fakr/{{ .Name }}_stringers.go
+list: foo,bar,bin,baz
+---
+
+package {{ .Name }}
+
+import "fmt"
+
+func main() {
+
+    {{ range $val, $index := splitByDelimiter .list "," }}
+            fmt.PrintLn($val)
+    {{ end }}
+
+}

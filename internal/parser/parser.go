@@ -14,17 +14,22 @@ import (
 )
 
 const (
-	caseSnake   = "caseSnake"
-	caseKebab   = "caseKebab"
-	casePascal  = "casePascal"
-	caseLower   = "caseLower"
-	caseTitle   = "caseTitle"
-	caseCamel   = "caseCamel"
-	pluralise   = "pluralise"
-	singularise = "singularise"
-	ordinalize  = "ordinalize"
-	titleize    = "titleize"
-	humanize    = "humanize"
+	caseSnake           = "caseSnake"
+	caseKebab           = "caseKebab"
+	casePascal          = "casePascal"
+	caseLower           = "caseLower"
+	caseTitle           = "caseTitle"
+	caseCamel           = "caseCamel"
+	pluralise           = "pluralise"
+	singularise         = "singularise"
+	ordinalize          = "ordinalize"
+	titleize            = "titleize"
+	humanize            = "humanize"
+	splitByDelimiter    = "splitByDelimiter"
+	splitAfterDelimiter = "splitAfterDelimiter"
+	contains            = "contains"
+	hasPrefix           = "hasPrefix"
+	hasSuffix           = "hasSuffix"
 )
 
 var (
@@ -41,6 +46,12 @@ var (
 		ordinalize:  flect.Ordinalize,
 		titleize:    flect.Titleize,
 		humanize:    flect.Humanize,
+		// String manipulations
+		splitByDelimiter:    formats.SplitByDelimiter,
+		splitAfterDelimiter: formats.SplitAfterDelimiter,
+		contains:            formats.Contains,
+		hasPrefix:           formats.HasPrefix,
+		hasSuffix:           formats.HasSuffix,
 	}
 )
 
