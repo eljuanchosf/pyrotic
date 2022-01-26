@@ -9,8 +9,9 @@ import "fmt"
 
 func main() {
 
-    {{ range $val, $index := splitByDelimiter .list "," }}
-            fmt.PrintLn($val)
+    {{ $nameList := splitByDelimiter .Meta.list "," }}
+    {{ range $i, $item := $nameList }}
+        fmt.PrintLn({{ $item }})
     {{ end }}
 
 }
