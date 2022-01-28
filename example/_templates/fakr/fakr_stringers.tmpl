@@ -1,6 +1,7 @@
 ---
 to: example/fakr/{{ .Name }}_stringers.go
 list: foo,bar,bin,baz
+contains_check: flash gordon
 ---
 
 package {{ .Name }}
@@ -12,6 +13,11 @@ func main() {
     {{ $nameList := splitByDelimiter .Meta.list "," }}
     {{ range $i, $item := $nameList }}
         fmt.PrintLn({{ $item }})
+    {{ end }}
+
+
+    {{ if contains .Meta.contains_check "flash" }}
+        fmt.PrintLn("contains flash")
     {{ end }}
 
 }
