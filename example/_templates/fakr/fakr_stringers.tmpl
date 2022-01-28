@@ -29,7 +29,7 @@ func main() {
         fmt.PrintLn("has prefix gordon")
     {{ end }}
 
-    {{ $enumList := splitByDelimiter .Meta.enum_list " " }}
+    {{ $enumList := splitByDelimiter .Meta.enum_list "-" }}
     {{ range $i, $item := $enumList }}
         fmt.PrintLn("{{$item}}")
     {{ end }}
