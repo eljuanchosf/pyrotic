@@ -31,6 +31,6 @@ func main() {
 
     {{ $enumList := splitByDelimiter .Meta.enum_list " " }}
     {{ range $i, $item := $enumList }}
-        fmt.PrintLn("$item")
+        fmt.PrintLn("{{$item}}")
     {{ end }}
 }
