@@ -4,7 +4,7 @@ code generator inspired by https://www.hygen.io/ for golang.
 
 ## Motivation
 Why not use hygen? great question! I would recommend [hygen](https://www.hygen.io/) over this, however [hygen](https://www.hygen.io/) is written in js.
-This project is for people who want to use a code generator and not have to install node.
+This project is for people who want to use a code generator and not have to install node. Pyrotic also is specifically written to generate go code, all templates are parsed using go's builtin template parser and output is formatted using go's built in code formatter.
 
 
 
