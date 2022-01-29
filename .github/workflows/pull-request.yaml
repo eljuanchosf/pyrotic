@@ -18,14 +18,14 @@ jobs:
       - name: Checkout Source
         uses: actions/checkout@v2
 
-      # - uses: actions/setup-go@v2
-      #   with:
-      #     go-version: ${{ matrix.goVer }} # The Go version to download (if necessary) and use.
-
       - name: Run gosec Security Scanner
         uses: securego/gosec@master
         with:
-          args: ./...          
+          args: ./...      
+              
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.goVer }} # The Go version to download (if necessary) and use.
 
       - name: test
         run: make test
