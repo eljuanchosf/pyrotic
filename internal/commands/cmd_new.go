@@ -33,7 +33,7 @@ func new(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	file, err := os.Create(dirPath)
+	file, err := os.Create(filepath.Clean(dirPath))
 	if err != nil {
 		log.Println("error creating base template ", err)
 		return
