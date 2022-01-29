@@ -94,12 +94,20 @@ Any templates that are declared in the [shared](example/_templates/shared/config
 
 ships with some already built in template funcs, some [examples](example/_templates/fakr/farkr_case.tmpl)
 
-- caseSnake (snake_case)
-- caseKebab (kebab-case)
-- casePascal (PascalCase)
-- caseLower (lowercase)
-- caseTitle (TITLECASE)
-- caseCamel (camelCase)
+| func name | description | code example | result |
+| --------- | ----------- | ------------ | ------ | 
+| caseSnake | convert to snake case | {{ MetaData \| caseSnake }} | meta_data |
+| caseKebab | convert to kebab case | {{ MetaData \| caseKebab }} | meta-data |
+| casePascal | convert to pascal case | {{ meta_data \| casePascal }} | MetaData |
+| caseLower | convert to lower case | {{ MetaData \| caseLower }} | metadata |
+| caseTitle | convert to title case | {{ MetaData \| caseTitle }} | METADATA |
+| caseCamel | convert to camel case | {{ MetaData \| caseCamel }} | metaData |
+| splitByDelimiter | splits string by delimiter | {{ splitByDelimiter "long,list" "," }} | []string{"long" "list"} |
+| splitAfterDelimiter | splits string after delimiter | {{ splitAfterDelimiter "a,long,list" "," }} | []string{"a," "long," "list"} |
+| contains | checks if string contains substring | {{ contains "foobarbin" "bar" }} | true |
+| hasPrefix | checks if string has the prefix | {{ contains "foobarbin" "foo" }} | true |
+| hasSuffix | checks if string has the suffix | {{ contains "foobarbin" "bin" }} | true |
+
 
 we also provide some Inflections using [flect](https://github.com/gobuffalo/flect)
 
