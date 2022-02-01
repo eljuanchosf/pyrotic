@@ -24,7 +24,7 @@ func Test_withTemplates(t *testing.T) {
 				fileSuffix: "tmpl",
 				dirPath:    "../../example/_templates/fakr",
 			},
-			want:    6,
+			want:    7,
 			wantErr: false,
 		},
 		{
