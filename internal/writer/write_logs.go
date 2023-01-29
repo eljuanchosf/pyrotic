@@ -10,6 +10,10 @@ import (
 	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 )
 
+type fileLog struct{}
+
+var _ fileReadWrite = (*fileLog)(nil)
+
 func (f *fileLog) WriteFile(name string, data []byte, perm os.FileMode) error {
 	log.Println(chalk.Green("logging to console:"), name, fmt.Sprintf("\n%s", string(data)))
 	return nil

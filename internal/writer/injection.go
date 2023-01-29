@@ -5,6 +5,30 @@ import (
 	"strings"
 )
 
+type InjectClause string
+
+const (
+	InjectBefore InjectClause = "Before"
+	InjectAfter  InjectClause = "After"
+)
+
+type Inject struct {
+	Matcher string
+	Clause  InjectClause
+}
+
+// Validate - exactly 1 clause must be met. Matcher must not be empty
+func (i *Inject) Validate() error {
+	hasClause := (i.Clause == InjectBefore || i.Clause == InjectAfter)
+	if !hasClause {
+		return ErrNoMatchingClause
+	}
+	if len(i.Matcher) <= 0 {
+		return ErrNoMatchingExpression
+	}
+	return nil
+}
+
 // mergeInjection - injects data before, or after a matcher withhin a source file.
 // if we can't find the matcher, don't do anything to the source file
 func mergeInjection(source, dataInjection []byte, inject Inject) ([]byte, error) {

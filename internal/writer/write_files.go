@@ -5,9 +5,21 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"github.com/code-gorilla-au/pyrotic/internal/chalk"
 )
+
+type Write struct {
+	mx sync.RWMutex
+	fs fileReadWrite
+}
+
+type fileWrite struct {
+	DryRun bool
+}
+
+var _ fileReadWrite = (*fileWrite)(nil)
 
 func (f *fileWrite) WriteFile(name string, data []byte, perm os.FileMode) error {
 	if err := os.MkdirAll(filepath.Dir(name), 0750); err != nil {
