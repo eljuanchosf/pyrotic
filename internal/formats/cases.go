@@ -41,14 +41,20 @@ func CaseCamel(str string) string {
 }
 
 func toSymbolCase(str string, sep string) string {
-	tmp := splitChunks(str)
+	tmp := replaceStringWithSep(str, "-")
 	tmp = matchSymbol.ReplaceAllString(tmp, fmt.Sprintf("${1}%s${2}", sep))
 	return strings.ToLower(tmp)
 }
 
-func splitChunks(str string) string {
+func replaceSpaceWithSymbol(str string) string {
 	tmp := matchFirstCap.ReplaceAllString(str, "${1}-${2}")
 	return matchAllCap.ReplaceAllString(tmp, "${1}-${2}")
+}
+
+func replaceStringWithSep(str, sep string) string {
+	expression := fmt.Sprintf("${1}%s${2}", sep)
+	tmp := matchFirstCap.ReplaceAllString(str, expression)
+	return matchAllCap.ReplaceAllString(tmp, expression)
 }
 
 func lowercaseFirst(str string) string {
