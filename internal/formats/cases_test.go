@@ -13,29 +13,29 @@ func TestCaseSnake(t *testing.T) {
 		args args
 		want string
 	}{
-		// {
-		// 	name: "camel should return random_case",
-		// 	args: args{
-		// 		str: "Random Case",
-		// 	},
-		// 	want: "random_case",
-		// },
 		{
-			name: "camel should return special_case",
+			name: "should return random_case",
+			args: args{
+				str: "Random Case",
+			},
+			want: "random_case",
+		},
+		{
+			name: "should return special_case",
 			args: args{
 				str: "SPECIAL CASE",
 			},
 			want: "special_case",
 		},
 		{
-			name: "camel should return capital_case",
+			name: "should return capital_case",
 			args: args{
 				str: "CAPITAL_CASE",
 			},
 			want: "capital_case",
 		},
 		{
-			name: "camel should return snake_case",
+			name: "should return snake_case",
 			args: args{
 				str: "snakeCase",
 			},
