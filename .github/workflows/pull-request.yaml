@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goVer: [1.17.3]
+        goVer: [1.21.4]
     steps:
       - name: Checkout Source
         uses: actions/checkout@v2
