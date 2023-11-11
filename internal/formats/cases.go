@@ -1,6 +1,7 @@
 package formats
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"unicode"
@@ -16,9 +17,7 @@ var matchSymbol = regexp.MustCompile("[_-]")
 var titleCase = cases.Title(language.English)
 
 func CaseSnake(str string) string {
-	tmp := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
-	tmp = matchAllCap.ReplaceAllString(tmp, "${1}_${2}")
-	tmp = matchSymbol.ReplaceAllString(tmp, "${1}_${2}")
+	tmp := toSymbolCase(str, "_")
 	return strings.ToLower(tmp)
 }
 
@@ -39,6 +38,17 @@ func CaseKebab(str string) string {
 func CaseCamel(str string) string {
 	tmp := CasePascal(str)
 	return lowercaseFirst(tmp)
+}
+
+func toSymbolCase(str string, sep string) string {
+	tmp := splitChunks(str)
+	tmp = matchSymbol.ReplaceAllString(tmp, fmt.Sprintf("${1}%s${2}", sep))
+	return strings.ToLower(tmp)
+}
+
+func splitChunks(str string) string {
+	tmp := matchFirstCap.ReplaceAllString(str, "${1}-${2}")
+	return matchAllCap.ReplaceAllString(tmp, "${1}-${2}")
 }
 
 func lowercaseFirst(str string) string {
