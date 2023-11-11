@@ -12,12 +12,12 @@ import (
 
 var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
 var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
-var matchSymbol = regexp.MustCompile("[_-]")
+var matchSymbol = regexp.MustCompile(`[_-]`)
 
 var titleCase = cases.Title(language.English)
 
 func CaseSnake(str string) string {
-	tmp := toSymbolCase(str, "_")
+	tmp := replaceStringWithSep(str, "_")
 	return strings.ToLower(tmp)
 }
 
@@ -29,9 +29,7 @@ func CasePascal(str string) string {
 }
 
 func CaseKebab(str string) string {
-	tmp := matchFirstCap.ReplaceAllString(str, "${1}-${2}")
-	tmp = matchAllCap.ReplaceAllString(tmp, "${1}-${2}")
-	tmp = matchSymbol.ReplaceAllString(tmp, "${1}-${2}")
+	tmp := replaceStringWithSep(str, "-")
 	return strings.ToLower(tmp)
 }
 
@@ -40,16 +38,11 @@ func CaseCamel(str string) string {
 	return lowercaseFirst(tmp)
 }
 
-func toSymbolCase(str string, sep string) string {
-	tmp := replaceStringWithSep(str, "_")
-	tmp = matchSymbol.ReplaceAllString(tmp, fmt.Sprintf("${1}%s${2}", sep))
-	return strings.ToLower(tmp)
-}
-
 func replaceStringWithSep(str, sep string) string {
 	expression := fmt.Sprintf("${1}%s${2}", sep)
 	tmp := matchFirstCap.ReplaceAllString(str, expression)
-	return matchAllCap.ReplaceAllString(tmp, expression)
+	tmp = matchSymbol.ReplaceAllString(tmp, expression)
+	return tmp
 }
 
 func lowercaseFirst(str string) string {
