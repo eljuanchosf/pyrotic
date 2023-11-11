@@ -12,7 +12,7 @@ import (
 
 var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
 var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
-var matchSymbol = regexp.MustCompile(`[_-]`)
+var matchSymbol = regexp.MustCompile(`[\s_-]`)
 
 var titleCase = cases.Title(language.English)
 
