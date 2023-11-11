@@ -41,7 +41,7 @@ func CaseCamel(str string) string {
 }
 
 func toSymbolCase(str string, sep string) string {
-	tmp := replaceStringWithSep(str, "-")
+	tmp := replaceStringWithSep(str, "_")
 	tmp = matchSymbol.ReplaceAllString(tmp, fmt.Sprintf("${1}%s${2}", sep))
 	return strings.ToLower(tmp)
 }
