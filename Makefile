@@ -13,22 +13,19 @@ MAKE_LIB:=$(PROJECT_ROOT)/scripts
 -include $(MAKE_LIB)/tests.mk
 -include $(MAKE_LIB)/lints.mk
 -include $(MAKE_LIB)/tools.mk
+-include $(MAKE_LIB)/generator.mk
 
 
 GO_BUILD_FLAGS=-ldflags="-X 'github.com/code-gorilla-au/pyrotic/internal/commands.version=dev-$(BRANCH)-$(COMMIT)'"
 
-# commands
-CMD_NAME ?= newCommand
+#####################
+##@ Main   
+#####################
 
-build: log scan ## build go files
+ci: log lint scan test ## Run ci tasks
+
+build: ## build go files
 	go build $(GO_BUILD_FLAGS) -o $(APP_NAME)
-
-code_gen: ## generate code
-	go generate
-
-generate_cmd: build ## gernate new command
-	./$(APP_NAME) generate cmd --name $(CMD_NAME)
-
 
 # HELP
 # This will output the help for each task
