@@ -2,25 +2,23 @@
 
 .DEFAULT_GOAL := help
 
+PROJECT_ROOT:=$(shell git rev-parse --show-toplevel)
 COMMIT := $(shell git rev-parse --short HEAD)
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 REPO := $(shell basename `git rev-parse --show-toplevel`)
 DATE := $(shell date +%Y-%m-%d-%H-%M-%S)
-APP_NAME := pyrotic
+APP_NAME := $(shell basename `git rev-parse --show-toplevel`)
+
+MAKE_LIB:=$(PROJECT_ROOT)/scripts
+-include $(MAKE_LIB)/tests.mk
+-include $(MAKE_LIB)/lints.mk
+-include $(MAKE_LIB)/tools.mk
+
 
 GO_BUILD_FLAGS=-ldflags="-X 'github.com/code-gorilla-au/pyrotic/internal/commands.version=dev-$(BRANCH)-$(COMMIT)'"
 
 # commands
 CMD_NAME ?= newCommand
-
-test: ## Run unit tests
-	go test --short -cover -failfast ./...
-
-test_integration: build ## run integration test
-	ENV=DEV ./pyrotic -p example/_templates generate fakr --meta foo=bar,bin=baz,enum_list=a-long-list
-
-scan: ## run security scan
-	gosec ./...
 
 build: log scan ## build go files
 	go build $(GO_BUILD_FLAGS) -o $(APP_NAME)
@@ -36,7 +34,7 @@ generate_cmd: build ## gernate new command
 # This will output the help for each task
 # thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help: ## This help.
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 
 
