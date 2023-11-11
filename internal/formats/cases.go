@@ -4,11 +4,16 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
 var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
 var matchSymbol = regexp.MustCompile("[_-]")
+
+var titleCase = cases.Title(language.English)
 
 func CaseSnake(str string) string {
 	tmp := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
@@ -20,7 +25,7 @@ func CaseSnake(str string) string {
 func CasePascal(str string) string {
 	tmp := matchFirstCap.ReplaceAllString(str, "${1} ${2}")
 	tmp = matchSymbol.ReplaceAllString(tmp, "${1} ${2}")
-	tmp = strings.Title(tmp)
+	tmp = titleCase.String(tmp)
 	return strings.ReplaceAll(tmp, " ", "")
 }
 
@@ -32,10 +37,7 @@ func CaseKebab(str string) string {
 }
 
 func CaseCamel(str string) string {
-	tmp := matchFirstCap.ReplaceAllString(str, "${1} ${2}")
-	tmp = matchSymbol.ReplaceAllString(tmp, "${1} ${2}")
-	tmp = strings.Title(tmp)
-	tmp = strings.ReplaceAll(tmp, " ", "")
+	tmp := CasePascal(str)
 	return lowercaseFirst(tmp)
 }
 
