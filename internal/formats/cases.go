@@ -46,11 +46,6 @@ func toSymbolCase(str string, sep string) string {
 	return strings.ToLower(tmp)
 }
 
-func replaceSpaceWithSymbol(str string) string {
-	tmp := matchFirstCap.ReplaceAllString(str, "${1}-${2}")
-	return matchAllCap.ReplaceAllString(tmp, "${1}-${2}")
-}
-
 func replaceStringWithSep(str, sep string) string {
 	expression := fmt.Sprintf("${1}%s${2}", sep)
 	tmp := matchFirstCap.ReplaceAllString(str, expression)
