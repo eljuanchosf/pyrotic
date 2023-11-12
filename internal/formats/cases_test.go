@@ -115,6 +115,20 @@ func TestCaseCamel(t *testing.T) {
 		want string
 	}{
 		{
+			name: "should return titleCase",
+			args: args{
+				str: "Title Case",
+			},
+			want: "titleCase",
+		},
+		{
+			name: "should return sentenceCase",
+			args: args{
+				str: "sentence case",
+			},
+			want: "sentenceCase",
+		},
+		{
 			name: "should return snakeCase",
 			args: args{
 				str: "snake_case",
@@ -140,6 +154,53 @@ func TestCaseCamel(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := CaseCamel(tt.args.str); got != tt.want {
 				t.Errorf("CaseCamel() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCaseKebab(t *testing.T) {
+	type args struct {
+		str string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "should return title-case",
+			args: args{
+				str: "Title Case",
+			},
+			want: "title-case",
+		},
+		{
+			name: "should return sentence-case",
+			args: args{
+				str: "sentence case",
+			},
+			want: "sentence-case",
+		},
+		{
+			name: "should return snake-case",
+			args: args{
+				str: "snake_case",
+			},
+			want: "snake-case",
+		},
+		{
+			name: "should return pascal-case",
+			args: args{
+				str: "PascalCase",
+			},
+			want: "pascal-case",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := CaseKebab(tt.args.str); got != tt.want {
+				t.Errorf("CaseKebab() = %v, want %v", got, tt.want)
 			}
 		})
 	}
