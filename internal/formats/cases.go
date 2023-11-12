@@ -40,8 +40,10 @@ func CaseCamel(str string) string {
 
 func replaceStringWithSep(str, sep string) string {
 	expression := fmt.Sprintf("${1}%s${2}", sep)
+	if matchSymbol.Match([]byte(str)) {
+		return matchSymbol.ReplaceAllString(str, expression)
+	}
 	tmp := matchFirstCap.ReplaceAllString(str, expression)
-	tmp = matchSymbol.ReplaceAllString(tmp, fmt.Sprintf("${1}%s${2}", sep))
 	fmt.Println("print", tmp)
 
 	return tmp
