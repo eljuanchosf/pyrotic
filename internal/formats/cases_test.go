@@ -14,18 +14,18 @@ func TestCaseSnake(t *testing.T) {
 		want string
 	}{
 		{
-			name: "should return random_case",
+			name: "should return title_case",
 			args: args{
-				str: "Random Case",
+				str: "Title Case",
 			},
-			want: "random_case",
+			want: "title_case",
 		},
 		{
-			name: "should return special_case",
+			name: "should return sentence_case",
 			args: args{
-				str: "SPECIAL CASE",
+				str: "sentence case",
 			},
-			want: "special_case",
+			want: "sentence_case",
 		},
 		{
 			name: "should return capital_case",
