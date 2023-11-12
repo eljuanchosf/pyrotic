@@ -47,7 +47,6 @@ func parseAgainstMatchers(str, sep string) string {
 		return matchSymbol.ReplaceAllString(str, expression)
 	}
 	tmp := matchFirstCap.ReplaceAllString(str, expression)
-	fmt.Println("print", tmp)
 
 	return tmp
 }
