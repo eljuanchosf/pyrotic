@@ -2,6 +2,7 @@ package parser
 
 import (
 	"encoding/json"
+	"errors"
 	"reflect"
 	"strings"
 	"testing"
@@ -226,7 +227,7 @@ func Test_hydrateData(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := hydrateData(tt.args.meta, tt.args.data)
 			if tt.wantErr {
-				odize.AssertError(t, err, tt.err)
+				odize.AssertTrue(t, errors.Is(err, tt.err))
 			}
 			gotJSON, err := json.Marshal(&got)
 			odize.AssertNoError(t, err)
