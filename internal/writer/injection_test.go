@@ -3,7 +3,7 @@ package writer
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/code-gorilla-au/odize"
 )
 
 func Test_mergeOutputs(t *testing.T) {
@@ -79,9 +79,9 @@ func Test_mergeOutputs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := mergeInjection(tt.args.source, tt.args.data, tt.args.inject)
-			assert.Equal(t, string(tt.want), string(got))
+			odize.AssertEqual(t, string(tt.want), string(got))
 			if tt.wantErr {
-				assert.Error(t, err)
+				odize.AssertError(t, err)
 			}
 		})
 	}

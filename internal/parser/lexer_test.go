@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/code-gorilla-au/odize"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -225,12 +226,12 @@ func Test_hydrateData(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := hydrateData(tt.args.meta, tt.args.data)
 			if tt.wantErr {
-				assert.ErrorIs(t, err, tt.err)
+				odize.AssertError(t, err, tt.err)
 			}
 			gotJSON, err := json.Marshal(&got)
-			assert.NoError(t, err)
+			odize.AssertNoError(t, err)
 			wantJSON, err := json.Marshal(tt.want)
-			assert.NoError(t, err)
+			odize.AssertNoError(t, err)
 			assert.JSONEq(t, string(wantJSON), string(gotJSON))
 		})
 	}

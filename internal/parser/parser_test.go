@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/code-gorilla-au/odize"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -44,7 +45,7 @@ func Test_withTemplates(t *testing.T) {
 				t.Errorf("withTemplates() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			assert.Equal(t, tt.want, len(got))
+			odize.AssertEqual(t, tt.want, len(got))
 			for _, tmp := range got {
 				assert.Greater(t, len(tmp), 0)
 			}
@@ -66,10 +67,10 @@ func TestTmplEngine_Parse_should_render(t *testing.T) {
 		funcs:     defaultFuncs,
 	}
 	data, err := te.Parse(expected)
-	assert.NoError(t, err)
-	assert.Equal(t, expected.Name, data[0].Name)
-	assert.Equal(t, "elo", data[0].To)
-	assert.Equal(t, "blah", strings.TrimSpace(string(data[0].Output)))
+	odize.AssertNoError(t, err)
+	odize.AssertEqual(t, expected.Name, data[0].Name)
+	odize.AssertEqual(t, "elo", data[0].To)
+	odize.AssertEqual(t, "blah", strings.TrimSpace(string(data[0].Output)))
 }
 func TestTmplEngine_Parse_missing_funcs_should_fail_on_meta_parse(t *testing.T) {
 	strTmp := `---
@@ -84,7 +85,7 @@ func TestTmplEngine_Parse_missing_funcs_should_fail_on_meta_parse(t *testing.T) 
 		templates: map[string]string{"tmp": strTmp},
 	}
 	_, err := te.Parse(expected)
-	assert.Error(t, err)
+	odize.AssertError(t, err)
 }
 
 func TestTmplEngine_Parse_missing_funcs_should_fail_on_template_parse(t *testing.T) {
@@ -100,5 +101,5 @@ func TestTmplEngine_Parse_missing_funcs_should_fail_on_template_parse(t *testing
 		templates: map[string]string{"tmp": strTmp},
 	}
 	_, err := te.Parse(expected)
-	assert.Error(t, err)
+	odize.AssertError(t, err)
 }

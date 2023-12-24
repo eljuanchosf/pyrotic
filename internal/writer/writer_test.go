@@ -18,7 +18,7 @@ func TestWrite_WriteFile_should_not_return_error(t *testing.T) {
 		fs: &mockWr,
 	}
 	err := w.WriteFile("blood", []byte("hello world"), 0700)
-	assert.NoError(t, err)
+	odize.AssertNoError(t, err)
 }
 
 func TestWrite_WriteFile_write_error_should_return_error(t *testing.T) {
@@ -31,7 +31,7 @@ func TestWrite_WriteFile_write_error_should_return_error(t *testing.T) {
 		fs: &mockWr,
 	}
 	err := w.WriteFile("blood", []byte("hello world"), 0700)
-	assert.Error(t, err)
+	odize.AssertError(t, err)
 }
 
 func TestWrite_AppendFile_should_return_ok(t *testing.T) {
@@ -42,7 +42,7 @@ func TestWrite_AppendFile_should_return_ok(t *testing.T) {
 		fs: &mockWr,
 	}
 	err := w.AppendFile("blood", []byte("hello world"))
-	assert.NoError(t, err)
+	odize.AssertNoError(t, err)
 }
 
 func TestWrite_AppendFile_open_file_error_should_return_error(t *testing.T) {
@@ -56,7 +56,7 @@ func TestWrite_AppendFile_open_file_error_should_return_error(t *testing.T) {
 		fs: &mockWr,
 	}
 	err := w.AppendFile("blood", []byte("hello world"))
-	assert.Error(t, err)
+	odize.AssertError(t, err)
 }
 
 func TestWrite_AppendFile_write_file_error_should_return_error(t *testing.T) {
@@ -70,7 +70,7 @@ func TestWrite_AppendFile_write_file_error_should_return_error(t *testing.T) {
 		fs: &mockWr,
 	}
 	err := w.AppendFile("blood", []byte("hello world"))
-	assert.Error(t, err)
+	odize.AssertError(t, err)
 }
 
 func TestWrite_InjectIntoFile_inject_after_should_return_no_error(t *testing.T) {
@@ -87,7 +87,7 @@ func TestWrite_InjectIntoFile_inject_after_should_return_no_error(t *testing.T) 
 		Matcher: "// after",
 		Clause:  InjectAfter,
 	})
-	assert.NoError(t, err)
+	odize.AssertNoError(t, err)
 }
 
 func TestWrite_InjectIntoFile_read_file_error_should_return_error(t *testing.T) {
@@ -104,7 +104,7 @@ func TestWrite_InjectIntoFile_read_file_error_should_return_error(t *testing.T) 
 		Matcher: "// after",
 		Clause:  InjectAfter,
 	})
-	assert.Error(t, err)
+	odize.AssertError(t, err)
 }
 
 func TestWrite_InjectIntoFile_inject_before_should_return_no_error(t *testing.T) {
@@ -121,7 +121,7 @@ func TestWrite_InjectIntoFile_inject_before_should_return_no_error(t *testing.T)
 		Matcher: "// before",
 		Clause:  InjectBefore,
 	})
-	assert.NoError(t, err)
+	odize.AssertNoError(t, err)
 }
 
 func TestWrite_InjectIntoFile_missing_token_should_return_error(t *testing.T) {
@@ -138,7 +138,7 @@ func TestWrite_InjectIntoFile_missing_token_should_return_error(t *testing.T) {
 		Matcher: "// before",
 		Clause:  InjectBefore,
 	})
-	assert.Error(t, err)
+	odize.AssertError(t, err)
 }
 
 func TestWrite_InjectIntoFile_write_file_error_should_return_error(t *testing.T) {
@@ -158,5 +158,5 @@ func TestWrite_InjectIntoFile_write_file_error_should_return_error(t *testing.T)
 		Matcher: "// before",
 		Clause:  InjectBefore,
 	})
-	assert.Error(t, err)
+	odize.AssertError(t, err)
 }
