@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/code-gorilla-au/odize"
-	"github.com/stretchr/testify/assert"
 )
 
 func Test_hydrateData(t *testing.T) {
@@ -233,7 +232,7 @@ func Test_hydrateData(t *testing.T) {
 			odize.AssertNoError(t, err)
 			wantJSON, err := json.Marshal(tt.want)
 			odize.AssertNoError(t, err)
-			assert.Equal(t, string(wantJSON), string(gotJSON))
+			odize.AssertEqual(t, string(wantJSON), string(gotJSON))
 		})
 	}
 }

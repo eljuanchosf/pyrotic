@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/code-gorilla-au/odize"
-	"github.com/stretchr/testify/assert"
 )
 
 func Test_withTemplates(t *testing.T) {
@@ -47,7 +46,7 @@ func Test_withTemplates(t *testing.T) {
 			}
 			odize.AssertEqual(t, tt.want, len(got))
 			for _, tmp := range got {
-				assert.Greater(t, len(tmp), 0)
+				odize.AssertTrue(t, len(tmp) > 0)
 			}
 		})
 	}

@@ -1,7 +1,5 @@
 github.com/code-gorilla-au/env v0.0.0-20231101054621-7a54afca2a47 h1:trs2A+qJC8TSCrwHjHo1RakFLSH4P3ExiQL+xg9dJp8=
 github.com/code-gorilla-au/env v0.0.0-20231101054621-7a54afca2a47/go.mod h1:UF4ViNLEMf471i3q0opnUR5fpw0ENIvveo92s0/h12Q=
-github.com/code-gorilla-au/odize v0.0.0-20231224011323-577118fff93e h1:bXctjL+/M+0DllpvjcrOsDkfnjDoREks6Pwvwu7PTA8=
-github.com/code-gorilla-au/odize v0.0.0-20231224011323-577118fff93e/go.mod h1:orZUzigNMH4cXfBHx8BP+fTYiPdkCbaq+dsEFkpP7C0=
 github.com/code-gorilla-au/odize v0.0.0-20231224012403-9119bf82dcc9 h1:graqsm5uRCatU4Bd8yNYTDVtuTb2LHrkCLJZruc7e8M=
 github.com/code-gorilla-au/odize v0.0.0-20231224012403-9119bf82dcc9/go.mod h1:orZUzigNMH4cXfBHx8BP+fTYiPdkCbaq+dsEFkpP7C0=
 github.com/cpuguy83/go-md2man/v2 v2.0.3/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
