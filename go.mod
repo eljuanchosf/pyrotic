@@ -3,7 +3,7 @@ module github.com/code-gorilla-au/pyrotic
 go 1.21.5
 
 require (
-	github.com/code-gorilla-au/odize v0.0.0-20231224012403-9119bf82dcc9
+	github.com/code-gorilla-au/odize v1.0.0
 	github.com/gobuffalo/flect v1.0.2
 	github.com/mattn/go-isatty v0.0.20
 	github.com/spf13/cobra v1.8.0
