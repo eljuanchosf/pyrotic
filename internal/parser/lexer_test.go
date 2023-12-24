@@ -233,7 +233,7 @@ func Test_hydrateData(t *testing.T) {
 			odize.AssertNoError(t, err)
 			wantJSON, err := json.Marshal(tt.want)
 			odize.AssertNoError(t, err)
-			assert.JSONEq(t, string(wantJSON), string(gotJSON))
+			assert.Equal(t, string(wantJSON), string(gotJSON))
 		})
 	}
 }
