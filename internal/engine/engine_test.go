@@ -86,6 +86,13 @@ func Test_generateMeta(t *testing.T) {
 		},
 		{
 			name:  "single quoted value",
+			input: `single='value'`,
+			expected: map[string]string{
+				"single": "value",
+			},
+		},
+		{
+			name:  "single double quoted value",
 			input: `single="value"`,
 			expected: map[string]string{
 				"single": "value",
@@ -99,7 +106,15 @@ func Test_generateMeta(t *testing.T) {
 			},
 		},
 		{
-			name:  "multiple quoted sections",
+			name:  "multiple single quoted sections",
+			input: `first='quoted value',second='another value'`,
+			expected: map[string]string{
+				"first":  "quoted value",
+				"second": "another value",
+			},
+		},
+		{
+			name:  "multiple double quoted sections",
 			input: `first="quoted value",second="another value"`,
 			expected: map[string]string{
 				"first":  "quoted value",

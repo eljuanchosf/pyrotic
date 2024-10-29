@@ -10,8 +10,11 @@ import (
 )
 
 const (
-	metaDelimiter         = ","
+	metaDelimiter         = ','
 	metaKeyValueDelimiter = "="
+	doubleQuote           = '"'
+	singleQuote           = '\''
+	emptyString           = ""
 )
 
 func New(dryrun bool, dirPath string, sharedPath string, fileSuffix string) (Core, error) {
@@ -91,21 +94,28 @@ func splitIntoParts(meta string) []string {
 	var parts []string
 	var currentPart strings.Builder
 	inQuotes := false
+	currentQuoteChar := rune(0)
 
 	for i := 0; i < len(meta); i++ {
-		char := meta[i]
+		char := rune(meta[i])
 
-		if char == '"' {
-			inQuotes = !inQuotes
+		if (char == doubleQuote || char == singleQuote) && (currentQuoteChar == 0 || char == currentQuoteChar) {
+			if inQuotes {
+				inQuotes = false
+				currentQuoteChar = 0
+			} else {
+				inQuotes = true
+				currentQuoteChar = char
+			}
 		}
 
-		if char == ',' && !inQuotes {
+		if char == metaDelimiter && !inQuotes {
 			parts = append(parts, currentPart.String())
 			currentPart.Reset()
 			continue
 		}
 
-		currentPart.WriteByte(char)
+		currentPart.WriteRune(char)
 	}
 
 	if currentPart.Len() > 0 {
@@ -117,38 +127,51 @@ func splitIntoParts(meta string) []string {
 
 func processValue(value string) string {
 	value = strings.TrimSpace(value)
-	if value == "" {
-		return ""
+	if value == emptyString {
+		return emptyString
 	}
 
-	if len(value) >= 2 && value[0] == '"' {
-		quoteCount := strings.Count(value, `"`)
-		if quoteCount >= 2 && value[len(value)-1] == '"' {
-			return value[1 : len(value)-1]
-		} else if quoteCount == 1 {
-			return value[1:]
-		}
+	hasMatchingQuotes := func(s string, quote rune) bool {
+		return len(s) >= 2 && rune(s[0]) == quote && rune(s[len(s)-1]) == quote
 	}
+
+	if hasMatchingQuotes(value, doubleQuote) {
+		quoteCount := strings.Count(value, string(doubleQuote))
+		if quoteCount >= 2 {
+			return value[1 : len(value)-1]
+		}
+	} else if value[0] == doubleQuote {
+		return value[1:]
+	}
+
+	if hasMatchingQuotes(value, singleQuote) {
+		quoteCount := strings.Count(value, string(singleQuote))
+		if quoteCount >= 2 {
+			return value[1 : len(value)-1]
+		}
+	} else if value[0] == singleQuote {
+		return value[1:]
+	}
+
 	return value
 }
 
 func parseKeyValue(part string) (string, string, bool) {
 	part = strings.TrimSpace(part)
-	if part == "" {
-		return "", "", false
+	if part == emptyString {
+		return emptyString, emptyString, false
 	}
 
-	kv := strings.SplitN(part, "=", 2)
+	kv := strings.SplitN(part, metaKeyValueDelimiter, 2)
 	if len(kv) != 2 {
-		return "", "", false
+		return emptyString, emptyString, false
 	}
 
 	key := strings.TrimSpace(kv[0])
 	value := processValue(kv[1])
 
-	// Validate key and unquoted empty value
-	if key == "" || (value == "" && kv[1] == "") {
-		return "", "", false
+	if key == emptyString || (value == emptyString && kv[1] == emptyString) {
+		return emptyString, emptyString, false
 	}
 
 	return key, value, true
