@@ -67,22 +67,89 @@ func (c *Core) Generate(data Data) error {
 	return nil
 }
 
-func generateMeta(meta string) map[string]string {
-	result := map[string]string{}
+func generateMeta(meta string) (result map[string]string) {
+	result = make(map[string]string)
+
 	if len(meta) == 0 {
 		return result
 	}
-	list := strings.Split(meta, metaDelimiter)
-	for _, keyVal := range list {
-		rawMeta := strings.Split(strings.TrimSpace(keyVal), metaKeyValueDelimiter)
 
-		if len(rawMeta) == 0 {
-			continue
+	parts := splitIntoParts(meta)
+
+	for _, part := range parts {
+		key, value, ok := parseKeyValue(part)
+		if !ok {
+			return make(map[string]string)
 		}
-		key := strings.TrimSpace(rawMeta[0])
-		value := strings.TrimSpace(rawMeta[1])
 		result[key] = value
 	}
 
-	return result
+	return
+}
+
+func splitIntoParts(meta string) []string {
+	var parts []string
+	var currentPart strings.Builder
+	inQuotes := false
+
+	for i := 0; i < len(meta); i++ {
+		char := meta[i]
+
+		if char == '"' {
+			inQuotes = !inQuotes
+		}
+
+		if char == ',' && !inQuotes {
+			parts = append(parts, currentPart.String())
+			currentPart.Reset()
+			continue
+		}
+
+		currentPart.WriteByte(char)
+	}
+
+	if currentPart.Len() > 0 {
+		parts = append(parts, currentPart.String())
+	}
+
+	return parts
+}
+
+func processValue(value string) string {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return ""
+	}
+
+	if len(value) >= 2 && value[0] == '"' {
+		quoteCount := strings.Count(value, `"`)
+		if quoteCount >= 2 && value[len(value)-1] == '"' {
+			return value[1 : len(value)-1]
+		} else if quoteCount == 1 {
+			return value[1:]
+		}
+	}
+	return value
+}
+
+func parseKeyValue(part string) (string, string, bool) {
+	part = strings.TrimSpace(part)
+	if part == "" {
+		return "", "", false
+	}
+
+	kv := strings.SplitN(part, "=", 2)
+	if len(kv) != 2 {
+		return "", "", false
+	}
+
+	key := strings.TrimSpace(kv[0])
+	value := processValue(kv[1])
+
+	// Validate key and unquoted empty value
+	if key == "" || (value == "" && kv[1] == "") {
+		return "", "", false
+	}
+
+	return key, value, true
 }
